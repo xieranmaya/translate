@@ -1,10 +1,10 @@
 ## 使用纯 CSS 实现 Google Photos 照片列表布局
 
-## Use CSS to implement Google Photos image layout
+## how to achieve Google Photos pictures layout only with CSS
 
 文章太长，因为介绍了如何一步一步进化到最后接近完美的效果的，不想读的同学可以直接跳到最后一个大标题之后看代码、demo及原理就好，或者也可以直接看下面这个链接的源代码。
 
-too long because I introed how to 进化 to the prefect effect in the last ....
+For sharing the secrets to get most perfect effect in every step to the end, this can be a very long essay.
 
 不过还是建议顺序读下去，因为后面的原理需要前面的内容做为铺垫，主要是在处理边角问题上。
 
