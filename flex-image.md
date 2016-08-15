@@ -93,7 +93,7 @@ Next , I will summrize the standards of evaluating pictureslayout based on the a
 1. Whether it can output in the oringal list  sequence
 2. Whether it can output in our eye's scan sequence, namely the same line-height
 3. Whether the picture can display  in the original proportion, or try to display as much as  possible
-4. Whether the area of every picture can be the same, or try to be the same( in fact, it is hard to realize in the layout showing the whole picture)
+4. Whether the area of every picture can be the same, or try to be the same( in fact, it is hard to realize in the      layout showing the whole picture)
 5. Whether the picture can be display vividly without any non-proportional stretch
 
 第一次看到类似 Google Photos 照片列表的布局已经不记得是在哪里了，当时只是觉得这种布局肯定需要 JS 参与，因为每行图片高度相同的情况下不可能那么恰到好处的在容器两端对齐，且所有图片之间的间距大小也一样(如果间距大小不一样但两端对齐，可以使用 inline 的图片加上 text-justify 来实现，在图片较小的时候(比如搜索引擎的图片结果)也不失为一种选择)，通过观察，发现每行的高度并不相同，就确认了必然需要 JS 参与才能完成那样的布局。
@@ -113,7 +113,7 @@ the operation process
 
 下面就来介绍一下我是如何只通过 CSS 一步一步实现的这个布局的
 
-next, I will introduce how to only use CSS to achieve this layout 
+next, I will introduce how  to achieve this layout only with CSS
 
 一开始，我们将图片设置为相同的高度:
 
@@ -136,6 +136,9 @@ first of all, I set the same height for all the pictures
 
 这样并不能让图片在水平方向上占满窗口，于是我想到了 flex-grow 这个属性，让 img 元素在水平方向变大占满容器，整个布局也变成了 flex 的了：
 
+This method can't be fill in the window in horizontal direction. So I think of the flex-grow, it can make img opnents sacle up to fill in the container in horizontal direction. Naturally, whole layout become flex.
+
+
 ```css
 div {
   display: flex;
@@ -148,19 +151,35 @@ img {
 ```
 
 把 flex container 的 flex-wrap 设置为 wrap，这样一行放不下时会自动折行，每行的图片图片因为 grow 的关系会在水平方向上占满屏幕，效果看上去已经很接近我们想要的了，但每张图片都会有不同程度的非等比拉伸，图片的内容会变形，这个好办，可以用 `object-fit: cover;` 来解决，但这么一来图片又会被裁剪一部分。
+ 
+ Set the flex-wrap of flex container into wrap. In this way, line wrap will happens if a line is too long. Every line pictures will fill in the screen due to the grow. It seems that it almost be our perfect effect, but every pictures have been stretched in non-proportion so that the pictures are out of shape. And this is easy for us, we can fix with `object-fit: cover;`. However, part of the picture will be cut out. 
 
 最终 demo: http://jsbin.com/tisaluy/1/edit?html,css,js,output
 
+last 
+
 不过上述的 DOM 结构显然是没办法在实际中使用的:
+
+Actually, above mentioned DOM structure can't be adopted in the practice
 
 * 不支持 object-fit 的浏览器下图片会变形，因为图片没有容器，所以也没办法用 background-size 来解决这个问题
 * 用了 object-fit 的浏览器下，图片会被裁剪一部分，这两条前面已经说过
 * 没办法跟图片一起展示一些相关的信息，因为是 img 裸标签
 * 另外就是在真实的网络环境中，图片的加载都是比较比较慢的，如果指望用图片自己来把布局撑开，用户肯定会看到非常多的闪烁，demo 里的闪烁应该已经非常明显了
 
+ * It does not support browser of object-fit,so the picture will be deformed. The reason is  the picture have  no container, and it's useless for background-size to solve this problem.
+ *By using the browser of object-fit, part of pictures  will be cut out( these two rules have been mentioned before)
+* It can't show the information with the picture together, because of the bare img tag
+* In a real network environment, pictures loading are rather slow.So if we try to use your picture to load, there must be so much flash.(it often occours flash in demo.)
+ 
+
 所以我们上面的这个布局事实上是没办法用于任何生产环境的。
+ 
+ So, above layout can't be used in any kind of situation.
 
 接下来我们把 DOM 结构改成下面这样的:
+
+Next, we change the DOM structure to this :
 
 ```html
 <section>
