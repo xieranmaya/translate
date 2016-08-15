@@ -82,23 +82,42 @@ In whole, "Google Photos" is the most representative of the photo layout , and s
 
 下面根据上面的分析稍微总结一下评判图片布局优劣的一些标准：
 
+Next , I will summrize the standards of evaluating pictureslayout based on the above analysis.
+
 1. 是否能尽量按原始列表中的顺序输出
 2. 能否按人眼的扫描顺序输出，即行高相同
 3. 图片能否按照原始比例展示，或者尽量按原始比例展示
 4. 每张图片的展示面积能否尽量接近，实际上在想完全展示照片的布局中，这一条是很难达成的
 5. 图片不被非等比拉伸，内容不变形，内容展示完全
+ 
+1. Whether it can output in the oringal list  sequence
+2. Whether it can output in our eye's scan sequence, namely the same line-height
+3. Whether the picture can display  in the original proportion, or try to display as much as  possible
+4. Whether the area of every picture can be the same, or try to be the same( in fact, it is hard to realize in the layout showing the whole picture)
+5. Whether the picture can be display vividly without any non-proportional stretch
 
 第一次看到类似 Google Photos 照片列表的布局已经不记得是在哪里了，当时只是觉得这种布局肯定需要 JS 参与，因为每行图片高度相同的情况下不可能那么恰到好处的在容器两端对齐，且所有图片之间的间距大小也一样(如果间距大小不一样但两端对齐，可以使用 inline 的图片加上 text-justify 来实现，在图片较小的时候(比如搜索引擎的图片结果)也不失为一种选择)，通过观察，发现每行的高度并不相同，就确认了必然需要 JS 参与才能完成那样的布局。
 
+When I saw "Google Photos" picture layout for the first time, I guess it is much probably  JS involved. Because it's impossible justified on both sides under the condition of the same picture height, and in the same  separation distance between the different pictures.( if one picture have the different separation distance while it can be justified on the both sides, it can use line picture and text-justify to achieve.在图片较小的时候(比如搜索引擎的图片结果)也不失为一种选择)After my observation, every row have different height, so I am sure there must be JS involved.
+
 然而当越来越多的开始网站使用这样的布局时，做为一个热衷于能用 CSS 实现就不用 JS 的前端工程师，我就在考虑，能否仅用 CSS 实现这样的布局呢，尤其是不要在 resize 时重新计算布局？
+
+As a 前端工程师, I perfer CSS to JS. However, when I saw more and mroe websites start to use this layput, an idea occours to me. Whether we can achieve this layout only by CSS instead of JS, especially not recalculate layout in the process of resizing.
 
 在经过一些尝试后，我发现可在一定程度上用纯 CSS 实现类似的布局，**这里说的一定程度上仅使用 CSS 实现布局，我的意思是，布局一但渲染完成，布局后序的 resize，zoom 都可以在没有 JS 参与的情况下保持稳定，也就是说，首次的渲染甚至可以通过服务器完成，整个过程可以没有 JS 参与，所以说是用纯 CSS 实现也不过分。**
 
+After trial, I realized it can achieve similar layout only by CSS to some extent.（only use CSS to achieve layout, what I mentioned here, referring to the following steps of  resizing and zooming can be stable without JS involved after rendering completed. That's to say, initial rendering can be achieved by server, and the whole process is not involved JS. So it's natural to say we only use CSS to achieve this layout.).
 ### 实现过程
+
+the operation process 
 
 下面就来介绍一下我是如何只通过 CSS 一步一步实现的这个布局的
 
+next, I will introduce how to only use CSS to achieve this layout 
+
 一开始，我们将图片设置为相同的高度:
+
+first of all, I set the same height for all the pictures
 
 ```html
 <style>
