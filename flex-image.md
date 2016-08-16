@@ -1,6 +1,6 @@
 ## 使用纯 CSS 实现 Google Photos 照片列表布局
 
-## how to achieve Google Photos pictures layout only with CSS
+## how to achieve Google Photos images layout only with CSS
 
 文章太长，因为介绍了如何一步一步进化到最后接近完美的效果的，不想读的同学可以直接跳到最后一个大标题之后看代码、demo及原理就好，或者也可以直接看下面这个链接的源代码。
 
@@ -11,7 +11,7 @@ So you guys can jump to the part of code, demo and principle, which follow the l
 But my suggestion is to read it from the beginning, because it will help you understand the principles better with the information of former part, which mainly solves the problem of picture corner disposal.
 
 先看下效果吧，要不然各位可能没动力读下去了，实在是有点长，可以试着 resize 或者 zoom 一下看看效果： https://xieranmaya.github.io/images/cats/cats.html
-First, let’s take a look at the result to make you more interested. I’m sorry it’s a little bit long, but maybe you can resize or zoom the pictures to check the effect.
+First, let’s take a look at the result to make you more interested. I’m sorry it’s a little bit long, but maybe you can resize or zoom the images to check the effect.
 
 ![image](https://cloud.githubusercontent.com/assets/2993947/14738104/5e28601c-08b2-11e6-8262-5351a575f3fb.png)
 
@@ -22,7 +22,7 @@ Besides, to show the SC, JSBIN is used in some demos that we will talk about lat
 Ok, let’s start.
 
 开始之前，先对比一下三种比较常见的图片布局的差异
-Firstly, let’s see the differences between three common pictures layout
+Firstly, let’s see the differences between three common images layout
 
 1. [花瓣](http://huaban.com/boards/20002009/)：
 1. petal
@@ -33,16 +33,16 @@ Firstly, let’s see the differences between three common pictures layout
     * 图片瀑布的底部一般是对不齐的
     * 虽然底部很难完全对齐，但使用 JS 对图片顺序进行重排能够让底部尽量对齐，所以此种布局在 reflow 的时候（比如resize，zoom）必然要有 JS 的参与
     
-    * this is common layout with equal breadth, which all pictures share same breadth
-    * Due to the stretching of pictures in same proportion and the same breadth of each, all pictures have different      heights.
-    * The disadvantages of this layout are some pictures might be missed by readers, because every picture has different   height and is not displayed in common browsing order, plus people usually scan things in horizontal direction.
-    * The picture displaying wall usually has uneven bottom 
+    * this is common layout with equal breadth, which all images share same breadth
+    * Due to the stretching of images in same proportion and the same breadth of each, all images have different      heights.
+    * The disadvantages of this layout are some images might be missed by readers, because every image has different   height and is not displayed in common browsing order, plus people usually scan things in horizontal direction.
+    * The image displaying wall usually has uneven bottom 
     * Though the bottom can not be entirely even, JS is applied to make it with reordering the photos. So JS must be      involved when the pictures are reflowed, resized or zoomed in this layout.
 
 
 2. Google Photos，[500px](https://500px.com/popular)，图虫等，以 Google Photos 为代表的即不等宽也不等高的图片布局有如下特点：
 
-2.pictures layout in which pictures has unequal breadth and height with Google Photos as representation, such else as 500px and tuchong.
+2.images layout in which image has unequal breadth and height with Google Photos as representation, such else as 500px and tuchong.
 
     * 图片也没有被非等比拉伸
     * 每行的图片在水平方向上也占满了屏幕，没有多余的空白
@@ -51,12 +51,12 @@ Firstly, let’s see the differences between three common pictures layout
     * 底部是对齐的
     * Google Photos 的布局中，当某几个日期的照片太少时，多个日期的照片会合并展示在同一行，当然这不是本文讨论的重点
     
-    * Pictures are stretched in same proportion.
-    * The display screen is fully occupied with every row of pictures in horizontal direction, leaving no blank.
-    * Due to the above two rules, every picture in the same row has different height, or the second rule is not true.
-    * The pictures are displayed in order, making it more convenient for readers to browse. This rule has to be observed   because the time of taking every picture is showed with Google Photos.
+    * images are stretched in same proportion.
+    * The display screen is fully occupied with every row of images in horizontal direction, leaving no blank.
+    * Due to the above two rules, every image in the same row has different height, or the second rule is not true.
+    * The images are displayed in order, making it more convenient for readers to browse. This rule has to be observed   because the time of taking every image is showed with Google Photos.
     * This layout has even bottom.
-    * In the layout of Google Photos, the pictures will be displayed in same row in spite of different date when there    is no enough pictures of same date. PS. This is secondary point we are going to talk about.   
+    * In the layout of Google Photos, the images will be displayed in same row in spite of different date when there    is no enough images of same date. PS. This is secondary point we are going to talk about.   
 
 3. Instangram
     
@@ -66,23 +66,23 @@ Firstly, let’s see the differences between three common pictures layout
 
 以上介绍的前两种布局都有一个共同点，那就是图片没有经过非等比拉伸，也就是说图片里的内容没有变形，也没有被裁剪，只是放大或者缩小，这是目前图片类应用在展示图片上的一个趋势，应该说，很少有专做图片的网站会把照片非等比拉伸显示（变形拉伸真的给人一种杀马特的感觉。。。），最次的也就是把图片等比拉伸后展示在一个正方形的区域里，类似于正方形容器的 background-size: cover; 的效果。
 
-Above mentioned two layouts have onething in common that the pictures  are stretched in same proportion. Thta's to say, the pictures are just zoom out and zoom in without any change of the pictures contents. This is the tendency of 目前图片类应用在展示图片上. In fact, few websites won't adopt the method of magnified or minified in equal proportion.(out of shape is 杀马特的感觉）. The last method is putting the picture with stretched in proportion into one square space, and all presenting the cover of square container's background-size effects.
+Above mentioned two layouts have onething in common that the images  are stretched in same proportion. Thta's to say, the images are just zoom out and zoom in without any change of the pictures contents. This is the tendency of 目前图片类应用在展示图片上. In fact, few websites won't adopt the method of magnified or minified in equal proportion.(out of shape is 杀马特的感觉）. The last method is putting the images with stretched in proportion into one square space, and all presenting the cover of square container's background-size effects.
 
 另外，在花瓣的布局中，比较宽的图片展示区域会比较小；而在第二种布局中，则是比较高的图片展示区域会比较小。
 
-what's more, in the petal layout, the display area will be smaller of the wider picture.  in the second layout,  however, the display will be smaller of the higher picture. 
+what's more, in the petal layout, the display area will be smaller of the wider images.  in the second layout,  however, the display will be smaller of the higher images. 
 
 但是，在第一种布局中，因为宽度是定死了的，所以**高宽比**小到一定程度的图片，显示区域会非常小。而在第二种布局中，因为不同行的高度是不一样的，如果比较高的图片出现在比较高的行，还是有可能展示的稍大些的。
 
-But in the first layout, the width is setted well,so the display area will be so small if height-width ratio of one picture is not big enough. In the second layout,because the different rows have the different height,the higher picture can show larger only if it shows in the upper row.
+But in the first layout, the width is setted well,so the display area will be so small if height-width ratio of one image is not big enough. In the second layout,because the different rows have the different height,the higher image can show larger only if it shows in the upper row.
 
 总体来说，以 Google Photos 为代表的图片布局，在显示效果上更优。关于如何使用 JS 来完成 Google Photos / 500px 布局的算法，这里就不讨论了，读者可以自己思考一下~
 
-In whole, "Google Photos" is the most representative of the photo layout , and show effect works better. About how to complete the Google Photos / 500px algorithm by JS, readers can think about it by youreslf.
+In whole, "Google Photos" is the most representative of the images layout , and show effect works better. About how to complete the Google Photos / 500px algorithm by JS, readers can think about it by youreslf.
 
 下面根据上面的分析稍微总结一下评判图片布局优劣的一些标准：
 
-Next , I will summrize the standards of evaluating pictureslayout based on the above analysis.
+Next , I will summrize the standards of evaluating images layout based on the above analysis.
 
 1. 是否能尽量按原始列表中的顺序输出
 2. 能否按人眼的扫描顺序输出，即行高相同
@@ -93,12 +93,12 @@ Next , I will summrize the standards of evaluating pictureslayout based on the a
 1. Whether it can output in the oringal list  sequence
 2. Whether it can output in our eye's scan sequence, namely the same line-height
 3. Whether the picture can display  in the original proportion, or try to display as much as  possible
-4. Whether the area of every picture can be the same, or try to be the same( in fact, it is hard to realize in the      layout showing the whole picture)
-5. Whether the picture can be display vividly without any non-proportional stretch
+4. Whether the area of every image can be the same, or try to be the same( in fact, it is hard to realize in the      layout showing the whole image)
+5. Whether the image can be display vividly without any non-proportional stretch
 
 第一次看到类似 Google Photos 照片列表的布局已经不记得是在哪里了，当时只是觉得这种布局肯定需要 JS 参与，因为每行图片高度相同的情况下不可能那么恰到好处的在容器两端对齐，且所有图片之间的间距大小也一样(如果间距大小不一样但两端对齐，可以使用 inline 的图片加上 text-justify 来实现，在图片较小的时候(比如搜索引擎的图片结果)也不失为一种选择)，通过观察，发现每行的高度并不相同，就确认了必然需要 JS 参与才能完成那样的布局。
 
-When I saw "Google Photos" picture layout for the first time, I guess it is much probably  JS involved. Because it's impossible justified on both sides under the condition of the same picture height, and in the same  separation distance between the different pictures.( if one picture have the different separation distance while it can be justified on the both sides, it can use line picture and text-justify to achieve.在图片较小的时候(比如搜索引擎的图片结果)也不失为一种选择)After my observation, every row have different height, so I am sure there must be JS involved.
+When I saw "Google Photos" image layout for the first time, I guess it is much probably  JS involved. Because it's impossible justified on both sides under the condition of the same picture height, and in the same  separation distance between the different pictures.( if one picture have the different separation distance while it can be justified on the both sides, it can use line picture and text-justify to achieve.在图片较小的时候(比如搜索引擎的图片结果)也不失为一种选择)After my observation, every row have different height, so I am sure there must be JS involved.
 
 然而当越来越多的开始网站使用这样的布局时，做为一个热衷于能用 CSS 实现就不用 JS 的前端工程师，我就在考虑，能否仅用 CSS 实现这样的布局呢，尤其是不要在 resize 时重新计算布局？
 
@@ -117,7 +117,7 @@ next, I will introduce how  to achieve this layout only with CSS
 
 一开始，我们将图片设置为相同的高度:
 
-first of all, I set the same height for all the pictures
+first of all, I set the same height for all the images
 
 ```html
 <style>
@@ -136,7 +136,7 @@ first of all, I set the same height for all the pictures
 
 这样并不能让图片在水平方向上占满窗口，于是我想到了 flex-grow 这个属性，让 img 元素在水平方向变大占满容器，整个布局也变成了 flex 的了：
 
-This method can't be fill in the window in horizontal direction. So I think of the flex-grow, it can make img opnents sacle up to fill in the container in horizontal direction. Naturally, whole layout become flex.
+This method can't be fill in the window in horizontal direction. So I think of the flex-grow, it can make images opnents sacle up to fill in the container in horizontal direction. Naturally, whole layout become flex.
 
 
 ```css
@@ -152,7 +152,7 @@ img {
 
 把 flex container 的 flex-wrap 设置为 wrap，这样一行放不下时会自动折行，每行的图片图片因为 grow 的关系会在水平方向上占满屏幕，效果看上去已经很接近我们想要的了，但每张图片都会有不同程度的非等比拉伸，图片的内容会变形，这个好办，可以用 `object-fit: cover;` 来解决，但这么一来图片又会被裁剪一部分。
  
- Set the flex-wrap of flex container into wrap. In this way, line wrap will happens if a line is too long. Every line pictures will fill in the screen due to the grow. It seems that it almost be our perfect effect, but every pictures have been stretched in non-proportion so that the pictures are out of shape. And this is easy for us, we can fix with `object-fit: cover;`. However, part of the picture will be cut out. 
+ Set the flex-wrap of flex container into wrap. In this way, line wrap will happens if a line is too long. Every line images will fill in the screen due to the grow. It seems that it almost be our perfect effect, but every image has been stretched in non-proportion so that the images are out of shape. And this is easy for us, we can fix with `object-fit: cover;`. However, part of the image will be cut out. 
 
 最终 demo: http://jsbin.com/tisaluy/1/edit?html,css,js,output
 
@@ -167,10 +167,10 @@ Actually, above mentioned DOM structure can't be adopted in the practice
 * 没办法跟图片一起展示一些相关的信息，因为是 img 裸标签
 * 另外就是在真实的网络环境中，图片的加载都是比较比较慢的，如果指望用图片自己来把布局撑开，用户肯定会看到非常多的闪烁，demo 里的闪烁应该已经非常明显了
 
- * It does not support browser of object-fit,so the picture will be deformed. The reason is  the picture have  no container, and it's useless for background-size to solve this problem.
- *By using the browser of object-fit, part of pictures  will be cut out( these two rules have been mentioned before)
-* It can't show the information with the picture together, because of the bare img tag
-* In a real network environment, pictures loading are rather slow.So if we try to use your picture to load, there must be so much flash.(it often occours flash in demo.)
+ * It does not support browser of object-fit,so the picture will be deformed. The reason is  the images has  no container, and it's useless for background-size to solve this problem.
+ *By using the browser of object-fit, part of images  will be cut out( these two rules have been mentioned before)
+* It can't show the information with the images together, because of the bare image tag
+* In a real network environment, pictures loading are rather slow.So if we try to use your images to load, there must be so much flash.(it often occours flash in demo.)
  
 
 所以我们上面的这个布局事实上是没办法用于任何生产环境的。
@@ -200,7 +200,7 @@ Next, we change the DOM structure to this :
 
 我们为图片增加了一个容器。依然把图片设置为定高，如此一来，每个 div 将被图片撑大，这时如果我们给 div 设置一个 flex-grow: 1; ，每个 div 将平分每行剩余的空间，div 会变宽，于是图片宽度并没有占满 div，如果我们将 img 的 width 设置为 100% 的话，在 IE 和 FF 下，div 已经 grow 的空间将不会重新分配（**我觉得这是个很有意思的现象，图片先把 div 撑大，div grow 之后又把图片拉大**），但在 Chrome 下，为 img 设置了 width: 100%; 之后，grow 的空间将被重新分配（我并没有深究具体是如何重新分配的），会让每个容器的宽度更加接近，这并不是我们想要的。试了几种样式组合后，我发现把 img 标签的 min-width 和 max-width 都设置为 100% 的话，在 Chrome 下的显示效果就跟 IE 和 FF 一样了。最后我们将 img 的 object-fit 属性设置为 cover，图片就被等比拉伸并占满容器了，不过与前一种布局一样，每行的高度是一样的，另外图片只显示了一部分，上下两边都被裁剪掉了一些。
 
-we can put a container for picture. First, the rated height is set well, and every div will be stretched by picture. Next, if we set a flex-grow for div, spare space in every line will divided equally by every div. Then the div will be wider, the picture wide can't fill in div completely. If we set the picture width to 100%, the grow space will not be redivided by div in IE and FF.( I personlly think this is very interesting, the picture stretch div first,then the div grow stretch the picture ).
+we can put a container for image. First, the rated height is set well, and every div will be stretched by image. Next, if we set a flex-grow for div, spare space in every line will divided equally by every div. Then the div will be wider, the image width can't fill in div completely. If we set the image width to 100%, the grow space will not be redivided by div in IE and FF.( I personlly think this is very interesting, the image stretch div first,then the div grow stretch the image ).
 
 
 
