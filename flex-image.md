@@ -4,7 +4,7 @@
 
 文章太长，因为介绍了如何一步一步进化到最后接近完美的效果的，不想读的同学可以直接跳到最后一个大标题之后看代码、demo及原理就好，或者也可以直接看下面这个链接的源代码。
 
-For sharing the secrets to get most perfect effect in every step to the end, this can be a very long essay. 
+For sharing the secrets to get most perfect effect in every step to the end, this can be a very long post. 
 So you guys can jump to the part of code, demo and principle, which follow the last main title, if you don’t want to read it from the beginning. Or you can just check the SC of the bellow link.
 
 不过还是建议顺序读下去，因为后面的原理需要前面的内容做为铺垫，主要是在处理边角问题上。
