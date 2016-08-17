@@ -235,6 +235,7 @@ div:nth-last-child(1){
 ```
 
 然后配合 media query，在屏幕不同宽度时，让"最后一行"的元素个数在窗口宽度变化时也动态变化:
+and media query is adopted here. when the screen have different width, the number of elemnets in the last row will change with the window's width.
 
 ```css
 @media (max-width: 1000px) and (min-width: 900px) {
@@ -261,7 +262,11 @@ div:nth-last-child(1){
 
 上面的代码写起来是相当麻烦的，因为每个屏幕宽度范围内又要写多个 nth-last-child 选择器，虽然我们可以用预处理器来循环迭代出这些代码，但最终生成出来的代码还是有不少重复。
 
+Every certain width have to be more “nth-last-child” selectors so that above code is rather complex. We can apply preprocessor to loop this code, but there are still many repetitious codes generated.
+
 有没有办法只指定最后多少个元素就行了，而不是写若干个 nth-last-child 选择器呢？其实办法也是有的，想必大家应该还记得 CSS 的 `~` 操作符吧，`a ~ b` 将选择在 `a` 后面且跟 `a` 同辈的所有匹配 `b` 的元素，于是我们可以这么写:
+
+Is there a way just appoint some elements instead of several “nth-last-child” selectors? The answer is yes. Here we should mention the “~”operator in CSS. Let’s write:
 
 ```css
 div:nth-last-child(8),
@@ -272,17 +277,32 @@ div:nth-last-child(8) ~ div{
 
 先选中倒数第 8 个元素，然后选中倒数第 8 个元素后面的所有同辈结点，这样，就选中了最后的 8 个元素，进一步，我们可以直接将选择器改写为`div:nth-last-child(9) ~ div`，就可以只用一个选择器选择最后的 8 个元素了。
 
+First, we can select the eighth last element. Then the fellow node after the eighth last element can be selected. Finally, the last eight elements are selected successfully. Furthermore, we can rewrite the selector to “div:nth-last-child(9) ~ div”, and we may select the last eight elements only with one selector.
+
 上面的几种选择尾部一些元素的不同选择器，实际上效果是不太一样的：
+
+The real effect varies from the different selectors we chose in the above rear elements. 
 
 * `div:nth-last-child` 的选择方法能保证倒数的 n 张图片一定被选中
 * `div:nth-last-child(n), div:nth-last-child(n) ~ div` 只能保证当 div 元素至少有 n 个时才能选中最后的 n 个元素，因为如果 `:nth-last-child(n)` 不存在，这个选择器就无效了
 * `div:nth-last-child(n+1) ~ div` 则需要保证 div 元素至少有 n+1 个时才能选中最后的 n 个元素，原理同上
+ 
+ “div:nth-last-child”, this method can make the last N images selected
+ “div:nth-last-child(n), div:nth-last-child(n) ~ div”, this method only make sure there must be more than N div       elements, so the last N elements can be selected. The selector no working if there is no“nth-last-child(n). 
+ “div:nth-last-child(n+1) ~ div” , this method have to make sure there must be more than N+1 div elements, so the last N+1 elements can be selected
+
 
 选择最后若干张图片这种方式还是不够完美，因为你无法确定你选择的 flex item 一定在最后一行，万一最后一行只有一张图片呢，这时倒数第二行的前几张图片就会 grow 的很厉害（因为后面几张不 grow），或者最后两行图片的数量都没有这么多张，那倒数第二行就没有元素 grow 了，就占不满这一行了，布局就会错乱。
 
+Actually， the way of choosing last several images is not perfect,  because you are not sure that flex item is in the last row. It might be only one image in the last row, and if happens, first images in the next-to-last row will grow badly. (The last images won’t grow). Or the last images in the last two rows are not up to a certain amount, and then the next-to-last row won’t grow to fill in this row. All may lead to the format disorder.
+
 那么有没有办法只让最后一行的元素不 grow 呢？一开始我也了很多，甚至在想有没有一个 :last-line 伪类什么的（因为有个 :first-line），始终没有找到能让最后一行不 grow 的方法，然而最后竟然在搜索一个其它话题时找到了办法：
 
+Is there any way to prevent the last row elements growing? I thought for a long while, even to seek for a last-line pseudo-class, but I failed. And then one day, I got the answer occasionally.
+
 那就是在最后一个元素的后面再加一个元素，让其 flex-grow 为一个非常大的值比如说 999999999，这样最后一行的剩余空间就基本全被这一个元素的 grow 占掉了，其它元素相当于没有 grow，更进一步，我们可以用伪元素来做这件事（不过 IE 浏览器的伪元素是不支持 flex 属性的，所以还是得用一个真实的元素做 placeholder）:
+
+Adding another element to the last element, which fixes flex-grow at a large value (e.g., 999999999). Then the remaining space in the last line will be taken fully up by this added element grow. The other elements are not grow, what’s more, we can achieve for this by pseudo-elements. (Pseudo-element of IE browser does not support flex properties, so it is essential to adopt a real element placeholder).
 
 ```css
 section::after {
@@ -293,13 +313,23 @@ section::after {
 
 到这里，我们基本解决这个布局遇到的所有问题。
 
+Ok, we basically solve all the problems encountered in this layout.
+
 Demo，resize 或者 zoom 然后观察最后一行的图片：http://jsbin.com/tisaluy/3/edit?html,css,output
+
+Demo，resize or zoom first, then observe the last row images.
 
 但还有最后一个问题，同前一种布局一样，如果你在线上去加载使用这种方式布局的网页，你会发现页面闪动非常厉害，因为图片在下载之前是不知道宽高的，我们并不能指望图片加载完成后让它把容器撑大，用户会被闪瞎眼。其实真正被闪瞎的可能是我们自己，毕竟开发时要刷新一万零八百遍。
 
+But there is one last question, this layout just like the former one. If you load the layout pages online, pages will occur a severe blinking issue. Before downloading the images, we have no ideas about the width and height. It’s impossible to wait images loading completed to stretch the container. What’s worse, we need refresh pages more than ten thousand times.
+
 所以，我们必须预先渲染出图片的展示区域（实际上几乎所有图片类网站都是这么做的），所以这里还是要小用一些 js，这些工作也可以在服务器端做，或者是用任何一个模板引擎(下面的代码使用了 angular 的模板语法)。
 
+So, we have to render the images display area in advance. (Actually, almost all websites with images adopt this method.) JS have to be applied in here. Those works can be finished in the server or any of template engines. (Below codes employ template syntax in angular.)
+
 这个布局一旦吐出来，后续对页面所有的动作(resize，zoom)都不会使布局错乱，同时也不需要 JS 参与，符合前文所说的用纯 CSS 实现:
+
+Once this layout finished, all the following steps(resize，zoom) won’t disorder the layout without JS involved. It did it successfully with CSS.
 
 ```html
 <style>
@@ -329,11 +359,16 @@ Demo，resize 或者 zoom 然后观察最后一行的图片：http://jsbin.com/t
 </style>
 <section>
     // 下一行的**表达式**是计算当图片以 200 的高度等比拉伸展示时宽度的值
+    
+    Next line “expression” is used to calculate the width value when image width of 200 is stretched
+    
     <div ng-repeat="img in imgs" style="width:{{img.width*200/img.height}}px;"></div>
 </section>
 ```
 
 到这里，我们才算实现了图片的非等宽布局。
+
+We achieve the images layout with非等宽.
 
 Demo，注意 html 模板里计算宽度的表达式：http://jsbin.com/tisaluy/4/edit?html,css,output
 
