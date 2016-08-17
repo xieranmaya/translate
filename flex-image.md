@@ -1,31 +1,34 @@
 ## 使用纯 CSS 实现 Google Photos 照片列表布局
 
-## how to achieve Google Photos images layout only with CSS
+## how to achieve Google Photos image layout with pure CSS
 
 文章太长，因为介绍了如何一步一步进化到最后接近完美的效果的，不想读的同学可以直接跳到最后一个大标题之后看代码、demo及原理就好，或者也可以直接看下面这个链接的源代码。
 
-For sharing the secrets to get most perfect effect in every step to the end, this can be a very long post. 
-So you guys can jump to the part of code, demo and principle, which follow the last main title, if you don’t want to read it from the beginning. Or you can just check the SC of the bellow link.
+For sharing the secrets of getting most perfect effect in every step to the end, this can be a very long post. 
+So you guys can jump to the part of code, demo and HOWs, which follow the last main title, if you don’t want to read it from the beginning. Or you can just check the source code of the bellow link.
 
 不过还是建议顺序读下去，因为后面的原理需要前面的内容做为铺垫，主要是在处理边角问题上。
-But my suggestion is to read it from the beginning, because it will help you understand the principles better with the information of former part, which mainly solves the problem of picture corner disposal.
+
+But my suggestion is to read it from the beginning, because it will help you understand the HOWs better with the information provided in the former part, which mainly solves the problem of some corner cases.
 
 先看下效果吧，要不然各位可能没动力读下去了，实在是有点长，可以试着 resize 或者 zoom 一下看看效果： https://xieranmaya.github.io/images/cats/cats.html
-First, let’s take a look at the result to make you more interested. I’m sorry it’s a little bit long, but maybe you can resize or zoom the images to check the effect.
+
+First, let’s take a look at the result to make you more interested, resize or zoom the images to check the dynamic effect.
 
 ![image](https://cloud.githubusercontent.com/assets/2993947/14738104/5e28601c-08b2-11e6-8262-5351a575f3fb.png)
 
 ## 另外后面一些 demo 为了方便展示源代码用了 jsbin，但 jsbin 偶尔抽风会显示不出效果，试着在源代码编辑框里不改变代码意思的情况下编辑一下（比如在最后打一下回车）应该就可以了，或者查看一下你浏览器的翻墙设置，因为里面引入了 Google CDN 上的文件，有可能是因为 js 加载不成功导致的。
-Besides, to show the SC, JSBIN is used in some demos that we will talk about later. But the JSBIN sometimes may not work. If that happens, just rewrite the SC in the edit box without changing the meaning. For example, press the “enter” button. Or you can check the setting of VPN on your browser, because the inset files from Google CDN may cause unsuccessful uploading of JS.
+
+## Besides, to show the source code, jsbin.com is used in some demos that we will talk about later. But the jsbin.com sometimes may not work. If that happens, just rewrite the source code in the edit box without changing the meaning. For example, press the “enter” button in the last line.
 
 ### 好了，正文开始。
-Ok, let’s start.
+### Ok, let’s start.
 
 开始之前，先对比一下三种比较常见的图片布局的差异
+
 Firstly, let’s see the differences between three common images layout
 
-1. [花瓣](http://huaban.com/boards/20002009/)：
-1. petal
+1. [Pinterest.com](https://www.pinterest.com/)：
 
     * 此种布局为比较常见的等宽布局，所有图片的宽度是一样的
     * 由于图片是等比拉伸（**等比拉伸的意思是图片的宽和高变化相同的比例，也就是图片展示的宽高比与原始宽高比一致**），而每张图片的宽度又是一样的，所以图片的高度就必然不一样了
@@ -33,16 +36,16 @@ Firstly, let’s see the differences between three common images layout
     * 图片瀑布的底部一般是对不齐的
     * 虽然底部很难完全对齐，但使用 JS 对图片顺序进行重排能够让底部尽量对齐，所以此种布局在 reflow 的时候（比如resize，zoom）必然要有 JS 的参与
     
-    * this is common layout with equal breadth, which all images share same breadth
-    * Due to the stretching of images in same proportion and the same breadth of each, all images have different      heights.
-    * The disadvantages of this layout are some images might be missed by readers, because every image has different   height and is not displayed in common browsing order, plus people usually scan things in horizontal direction.
-    * The image displaying wall usually has uneven bottom 
-    * Though the bottom can not be entirely even, JS is applied to make it with reordering the photos. So JS must be      involved when the pictures are reflowed, resized or zoomed in this layout.
+    * This is common layout with equal width, which all images share a same width
+    * Due to the stretching of images in same proportion and the same width of each, all images have different heights.
+    * The disadvantages of this layout is that some images might be missed by readers, because every image has different height thus start from different top position and is not displayed in common browsing order, plus people usually scan things in horizontal direction.
+    * The image displaying wall usually has uneven bottom
+    * Though the bottom can not be entirely even, JS is applied to make it with reordering the photos. So JS must be involved when the pictures are reflowed, resized or zoomed in this layout.
 
 
 2. Google Photos，[500px](https://500px.com/popular)，图虫等，以 Google Photos 为代表的即不等宽也不等高的图片布局有如下特点：
 
-2.images layout in which image has unequal breadth and height with Google Photos as representation, such else as 500px and tuchong.
+2. Images layout in which image has unequal breadth and height with Google Photos as representation, such else as 500px and tuchong.com.
 
     * 图片也没有被非等比拉伸
     * 每行的图片在水平方向上也占满了屏幕，没有多余的空白
@@ -51,17 +54,17 @@ Firstly, let’s see the differences between three common images layout
     * 底部是对齐的
     * Google Photos 的布局中，当某几个日期的照片太少时，多个日期的照片会合并展示在同一行，当然这不是本文讨论的重点
     
-    * images are stretched in same proportion.
-    * The display screen is fully occupied with every row of images in horizontal direction, leaving no blank.
-    * Due to the above two rules, every image in the same row has different height, or the second rule is not true.
-    * The images are displayed in order, making it more convenient for readers to browse. This rule has to be observed   because the time of taking every image is showed with Google Photos.
-    * This layout has even bottom.
-    * In the layout of Google Photos, the images will be displayed in same row in spite of different date when there    is no enough images of same date. PS. This is secondary point we are going to talk about.   
+    * Images are stretched in same proportion.
+    * The display screen is fully occupied with every row of images in horizontal direction, leaving no extra blank.
+    * Due to the above two rules, every image in the same row has different height, or the second rule will be broken.
+    * The images are displayed in order, making it more convenient for readers to browse. This rule has to be obeyed because the taken time of the image is showed within Google Photos.
+    * This bottom of this is even.
+    * In the layout of Google Photos, the images will be displayed in same row in spite of different date when there is no enough images of same date. PS. This is a secondary point we are going to talk about.   
 
 3. Instangram
     
     * 正方形图片布局，就不多说了。。。
-    About the square layout, it's unnecessary to explain more.
+    * It's a square layout, witch is unnecessary to explain more.
 
 
 以上介绍的前两种布局都有一个共同点，那就是图片没有经过非等比拉伸，也就是说图片里的内容没有变形，也没有被裁剪，只是放大或者缩小，这是目前图片类应用在展示图片上的一个趋势，应该说，很少有专做图片的网站会把照片非等比拉伸显示（变形拉伸真的给人一种杀马特的感觉。。。），最次的也就是把图片等比拉伸后展示在一个正方形的区域里，类似于正方形容器的 background-size: cover; 的效果。
