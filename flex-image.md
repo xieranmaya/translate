@@ -373,6 +373,7 @@ We achieve the images layout with非等宽.
 Demo，注意 html 模板里计算宽度的表达式：http://jsbin.com/tisaluy/4/edit?html,css,output
 
 那么这个布局的展示效果究竟如何呢？
+What about the outcome effect of the layout?
 
 实际上我专门写了代码计算每张图片被展示出来的比例到底有多少：在图片高度为 150px 左右时，约有三分之一的图片展示比例在 99% 以上。最差的图片展示比例一般在 70% 左右浮动，平均每张图片展示比例在 90% 以上。图片越矮，展示效果会越好；图片越高，展示效果就越差。
 
