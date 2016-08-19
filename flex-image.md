@@ -499,4 +499,4 @@ Finally, more such arrangement float   the effects of Google Photos which images
 
 ##### 本文到此结束，谢谢围观！文中如有纰漏之处，还请各位大神留言指正
 
-That's about it for this article.Thank you for reading!, if flawed place,In this paper asks the message to point out mistakes
+That's all,folks!if you have any thoughts or questions,feel free to leave a comment!
