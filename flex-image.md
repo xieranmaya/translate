@@ -417,6 +417,8 @@ http://jsbin.com/lixece/1/edit?html,css,output
 
 4 月 2 号的早上我醒来的时候，突然想到，既然可以让一个容器始终保持正方形，那岂不是也可以让这个容器始终保持任何比例？显然是可以的，只要我们把用于撑大父元素的那个元素的 padding-bottom 设置为一个我们想要的值就可以了！这样一来，说不定可以实现图片布局中，所有图片都完全展示且占满水平宽度的布局（也就是 Google Photos / 500px 的布局）！
 
+When I woke up On the morning of April 2，an idea came into my mind that since you can always keep the container in a square, would it  mean that you can remain it in any proportion? certainly yes,we only have to set the padding-bottom of the element for stretching parent element a value  we want ! In this way, maybe the layout can be achieved that all the pictures can be shown and completely fill the horizontal width , that is layout of Google Photos / 500px!
+
 当然，前面提到过，由于图片加载缓慢，图片布局往往都会提前知道图片的宽高来进行容器的预渲染，然后图片加载完成后直接放进去。
 
 所以这里我们仍然需要用 JS 或者服务器来计算一下图片的宽高比例，然后设置到 padding-bottom 上面去，以保证容器的宽高比始终是其内部图片的宽高比。
