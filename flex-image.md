@@ -423,11 +423,16 @@ When I woke up On the morning of April 2，an idea came into my mind that since 
 
 所以这里我们仍然需要用 JS 或者服务器来计算一下图片的宽高比例，然后设置到 padding-bottom 上面去，以保证容器的宽高比始终是其内部图片的宽高比。
 
+
+Certainly, as I mentioned earlier, because of the slow image loading, the image layouts often know the width and height of the image in advance to pre-render  the container , and then directly put into it after the image is loaded. 
+So  we still need JS or server to calculate the image aspect ratio, and then set it in the padding-bottom to  ensure that the aspect ratio of the container is always the same to its ernal images.
 我们先让所有图片以 200px 的高度展示，写出如下模板代码：
 
+let all the pictures shown in the height of 200px, as shown below:
 ```html
 <div style="display:flex;flex-wrap:wrap;">
   <div ng-repeat="img in imgs" style="width:{{img.width*200/img.height}}px;">这个公式计算了图片高度为200时的宽度的值
+  
     <div style="padding-bottom:{{img.height/img.width*100}}%"></div>这个公式让此元素及其父元素的比例与图片原始比例相同，因为是垂直方向的 padding，所以是高度除以宽度
   </div>
 </div>
