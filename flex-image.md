@@ -488,8 +488,15 @@ Demo: http://jsbin.com/tisaluy/8/edit?html,css,output
 
 ### 关于降级
 
+About degradation
+
 由于 IE 9 都是不支持 flexbox 的，所以这个方案必然需要优雅降级，在不支持的浏览器上，让图片都以正方形展示应该也不会太差，然后用 float 或者 inline-block 来折行，这里就不细说了。
 
+Since flexbox is not supported in IE 9, Graceful degradation of this program is necessary. It should not be too bad to display these pictures on a unsupported browser. Then float or inline-block can be used to break the line which it is not possible to detail here.
+
 最后，多个这种布局 float 一下，就可以实现 Google Photos 那种某几个连续日期的图片太少时，展示在同一行的效果。读者可以自行试一下，就不放 demo 了。
+Finally, more such arrangement float   the effects of Google Photos which images can display in one row if images of consecutive days is too little can be achieved  .  Readers can try on your own.
 
 ##### 本文到此结束，谢谢围观！文中如有纰漏之处，还请各位大神留言指正
+
+That's about it for this article.Thank you for reading!, if flawed place,In this paper asks the message to point out mistakes
