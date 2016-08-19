@@ -433,7 +433,11 @@ let all the pictures shown in the height of 200px, as shown below:
 <div style="display:flex;flex-wrap:wrap;">
   <div ng-repeat="img in imgs" style="width:{{img.width*200/img.height}}px;">这个公式计算了图片高度为200时的宽度的值
   
+ This formula  calculate the value of the width of the image when the height is 200
+  
     <div style="padding-bottom:{{img.height/img.width*100}}%"></div>这个公式让此元素及其父元素的比例与图片原始比例相同，因为是垂直方向的 padding，所以是高度除以宽度
+    
+    The formula for the proportion of the element and its parent element's is the same as the  proportion of the original images, because it is vertical padding, so it is height divided by the width.
   </div>
 </div>
 ```
