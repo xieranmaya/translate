@@ -381,7 +381,7 @@ What about the outcome effect of the layout?
 
 ### 看到这里，你应该是觉得被坑了，因为这并没有实现标题中说的 Google Photos 照片列表的布局
 
-You may thought you are played fool of if you not continue to read on. Because it didn’t accomplish the Google Photos images layout as expected.
+You may thought you are played fool of if you don't continue to read on. Because it didn’t accomplish the Google Photos images layout as you expected.
 
 因为**每行的高度是一样的**，就必然导致大部分图片没有完全展示，跟 Google Photos / 500px 那些高大上的布局根本就不一样！
 
