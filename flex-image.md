@@ -64,7 +64,7 @@ Firstly, let’s see the differences between three common images layout
 3. Instangram
     
     * 正方形图片布局，就不多说了。。。
-    * It's a square layout, witch is unnecessary to explain more.
+    * It's a square layout, which is unnecessary to explain more.
 
 
 以上介绍的前两种布局都有一个共同点，那就是图片没有经过非等比拉伸，也就是说图片里的内容没有变形，也没有被裁剪，只是放大或者缩小，这是目前图片类应用在展示图片上的一个趋势，应该说，很少有专做图片的网站会把照片非等比拉伸显示（变形拉伸真的给人一种杀马特的感觉。。。），最次的也就是把图片等比拉伸后展示在一个正方形的区域里，类似于正方形容器的 background-size: cover; 的效果。
@@ -373,11 +373,15 @@ We achieve the images layout with非等宽.
 Demo，注意 html 模板里计算宽度的表达式：http://jsbin.com/tisaluy/4/edit?html,css,output
 
 那么这个布局的展示效果究竟如何呢？
-What about the outcome effect of the layout?
+What about the final effect of the layout?
 
 实际上我专门写了代码计算每张图片被展示出来的比例到底有多少：在图片高度为 150px 左右时，约有三分之一的图片展示比例在 99% 以上。最差的图片展示比例一般在 70% 左右浮动，平均每张图片展示比例在 90% 以上。图片越矮，展示效果会越好；图片越高，展示效果就越差。
 
+I wrote the code to calculate the percentage of one image shows. When images height is about 150px, one third images can show 99% content. The worst effect of images can display about 70% content. So, in average, the display percentage of all images is about 90%. The display effect will be better if the image is shorter, and the display effect will be worse if the image is higher.
+
 因为这种方案最后也被我抛弃了，所以就不放计算展示比例的 demo 了。
+
+I gave up this solution later, so there is no need to present detailed demo.
 
 ### 看到这里，你应该是觉得被坑了，因为这并没有实现标题中说的 Google Photos 照片列表的布局
 
