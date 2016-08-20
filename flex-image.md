@@ -169,15 +169,15 @@ Actually, the above mentioned DOM structure can't be used in the practice
 * 没办法跟图片一起展示一些相关的信息，因为是 img 裸标签
 * 另外就是在真实的网络环境中，图片的加载都是比较比较慢的，如果指望用图片自己来把布局撑开，用户肯定会看到非常多的闪烁，demo 里的闪烁应该已经非常明显了
 
- * It does not support browser which lack the `object-fit` support, so the picture will be distorted. The reason is the images has no container, and it's useless for background-size to solve this problem.
- *By using the browser of object-fit, part of images  will be cut out( these two rules have been mentioned before)
-* It can't show the information with the images together, because of the bare image tag
-* In a real network environment, pictures loading are rather slow.So if we try to use your images to load, there must be so much flash.(it often occours flash in demo.)
+ * It does not support browser which lack the `object-fit` support, so the picture will be distorted. The reason is the images has no container, and it's not posible to use `background-size` to solve this problem.
+ *By using the object-fit porperty in supported browser, part of images will be cliped( these two rules have been mentioned before)
+* It can't show the information with the images together, because of the bare image tag with no container
+* In a real network environment, pictures loading are rather slow. So if we try to use the images size to streth the layout, there must be many flash/blink or sth like FOUC, it should already occoured in demo.
  
 
 所以我们上面的这个布局事实上是没办法用于任何生产环境的。
  
- So, above layout can't be used in any kind of situation.
+So, the above mentioned layout can't be used in any kind of production situation.
 
 接下来我们把 DOM 结构改成下面这样的:
 
@@ -202,8 +202,8 @@ Next, we change the DOM structure to this :
 
 我们为图片增加了一个容器。依然把图片设置为定高，如此一来，每个 div 将被图片撑大，这时如果我们给 div 设置一个 flex-grow: 1; ，每个 div 将平分每行剩余的空间，div 会变宽，于是图片宽度并没有占满 div，如果我们将 img 的 width 设置为 100% 的话，在 IE 和 FF 下，div 已经 grow 的空间将不会重新分配（**我觉得这是个很有意思的现象，图片先把 div 撑大，div grow 之后又把图片拉大**），但在 Chrome 下，为 img 设置了 width: 100%; 之后，grow 的空间将被重新分配（我并没有深究具体是如何重新分配的），会让每个容器的宽度更加接近，这并不是我们想要的。试了几种样式组合后，我发现把 img 标签的 min-width 和 max-width 都设置为 100% 的话，在 Chrome 下的显示效果就跟 IE 和 FF 一样了。最后我们将 img 的 object-fit 属性设置为 cover，图片就被等比拉伸并占满容器了，不过与前一种布局一样，每行的高度是一样的，另外图片只显示了一部分，上下两边都被裁剪掉了一些。
 
-we can put a container for image. First, the rated height is set well, and every div will be stretched by image. Next, if we set a flex-grow for div, spare space in every line will be divided equally by every div. Then the div will be wider, the image width can't fill in div completely. If we set the image width to 100%, the grow space will not be redivided by div in IE and FF.( I personally think this is very interesting, the image stretch div first, then the div grow stretch the image ).But in the Chrome, we set 100% width for image, and grow space will be reallocated. In this way, it will make every container width much the same. However, it’s not what I want. After several combinations, I almost did it. If we set the image min-width and max-width to 100%, the display effect in Chrome will be the same with IE and FF. Last, we set the image property to cover, and the image will fill in the container with equal proportional stretch.
-This method still is not perfect just like the former one. The image height is the same, but partial image has been cut out for no reason.
+We added a container for each image. Firstly, the rated height is set well, and every `div` will be stretched by image. Next, if we set a `flex-grow: 1` for the `div`s, extra spaces in each row will be divided equally by each `div`. Then the `div` will be wider, but the image width can't fill in the div completely. If we set the image width to 100%, the growed space will not be redivid by `div` in IE and FF.(I personally think this is very interesting, the image stretch div first, then the `div`'s grow stretchs the image). But in Chrome, setting 100% width for image will cause the extra space in each row to reallocate. Which in result makes every container's width to more likely the same. However, it’s not what we want. After several combinations of css property, I almost did it. If we set the image's `min-width` and `max-width` to 100% at the same time, the display effect in Chrome will be the same with IE and FF. Lastly, we set the image's `object-fit` property to `cover`, and the image will fill in the container with equal proportional stretch.
+This method still is not perfect just like the former one. The image height is the same, but partial image has been clip for no reason.
 
 
 
