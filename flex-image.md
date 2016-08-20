@@ -295,15 +295,15 @@ The real effect varies from the different selectors we chose in the above rear e
 
 选择最后若干张图片这种方式还是不够完美，因为你无法确定你选择的 flex item 一定在最后一行，万一最后一行只有一张图片呢，这时倒数第二行的前几张图片就会 grow 的很厉害（因为后面几张不 grow），或者最后两行图片的数量都没有这么多张，那倒数第二行就没有元素 grow 了，就占不满这一行了，布局就会错乱。
 
-Actually， the way of choosing last several images is not perfect,  because you are not sure that flex item is in the last row. It might be only one image in the last row, and if happens, first images in the next-to-last row will grow badly. (The last images won’t grow). Or the last images in the last two rows are not up to a certain amount, and then the next-to-last row won’t grow to fill in this row. All may lead to the format disorder.
+Actually， the way of choosing last several images is not perfect, because it's not guarrented that the flex items you select in the last row. It might be only one image in the last row, and if happens, first images in the next-to-last row will grow badly. (Because the last N images won’t grow). Or the last images in the last two rows are not up to a certain amount, and then the next-to-last row won’t grow to fill in this row. All may lead to the format disorder.
 
 那么有没有办法只让最后一行的元素不 grow 呢？一开始我也了很多，甚至在想有没有一个 :last-line 伪类什么的（因为有个 :first-line），始终没有找到能让最后一行不 grow 的方法，然而最后竟然在搜索一个其它话题时找到了办法：
 
-Is there any way to prevent the last row elements growing? I thought for a long while, even to seek for a last-line pseudo-class, but I failed. And then one day, I got the answer occasionally.
+Is there any way to prevent the last row elements growing? I thought for a long while, even to seek for a `last-line` `pseudo-class`, but I failed. And then one day, I got the answer occasionally.
 
 那就是在最后一个元素的后面再加一个元素，让其 flex-grow 为一个非常大的值比如说 999999999，这样最后一行的剩余空间就基本全被这一个元素的 grow 占掉了，其它元素相当于没有 grow，更进一步，我们可以用伪元素来做这件事（不过 IE 浏览器的伪元素是不支持 flex 属性的，所以还是得用一个真实的元素做 placeholder）:
 
-Adding another element to the last element, which fixes flex-grow at a large value (e.g., 999999999). Then the remaining space in the last line will be taken fully up by this added element grow. The other elements are not grow, what’s more, we can achieve for this by pseudo-elements. (Pseudo-element of IE browser does not support flex properties, so it is essential to adopt a real element placeholder).
+Adding another element to the last element, and sets its `flex-grow` to a large value (e.g., 999999999). Then the remaining space in the last line will be taken fully up by this extra element's grow. The other elements are not grow, what’s more, we can achieve for this by pseudo-elements. (Pseudo-element of IE browser does not support flex properties, so it is essential to adopt a real element placeholder).
 
 ```css
 section::after {
@@ -322,15 +322,15 @@ Demo，resize or zoom first, then observe the last row images.
 
 但还有最后一个问题，同前一种布局一样，如果你在线上去加载使用这种方式布局的网页，你会发现页面闪动非常厉害，因为图片在下载之前是不知道宽高的，我们并不能指望图片加载完成后让它把容器撑大，用户会被闪瞎眼。其实真正被闪瞎的可能是我们自己，毕竟开发时要刷新一万零八百遍。
 
-But there is one last question, this layout just like the former one. If you load the layout pages online, pages will occur a severe blinking issue. Before downloading the images, we have no ideas about the width and height. It’s impossible to wait images loading completed to stretch the container. What’s worse, we need refresh pages more than ten thousand times.
+But there is one last question, this layout just like the former one. If you load the layout pages online, pages will occur a severe blinking issue. Before downloading the images, we have no ideas about the width and height. It’s impossible to wait images loading completed to stretch the container. What’s worse, we need refresh pages more than ten thousand times at develop which will have a very worse effect on our eyes too.
 
 所以，我们必须预先渲染出图片的展示区域（实际上几乎所有图片类网站都是这么做的），所以这里还是要小用一些 js，这些工作也可以在服务器端做，或者是用任何一个模板引擎(下面的代码使用了 angular 的模板语法)。
 
-So, we have to render the images display area in advance. (Actually, almost all websites with images adopt this method.) JS have to be applied in here. Those works can be finished in the server or any of template engines. (Below codes employ template syntax in angular.)
+So, we have to render the images display area in advance. (Actually, almost all websites with images adopt this method.) JS have to be applied in here. Those works can be finished in the server or any of template engines. (Below codes employ template syntax in Angular.)
 
 这个布局一旦吐出来，后续对页面所有的动作(resize，zoom)都不会使布局错乱，同时也不需要 JS 参与，符合前文所说的用纯 CSS 实现:
 
-Once this layout finished, all the following steps(resize，zoom) won’t disorder the layout without JS involved. It did it successfully with CSS.
+Once this layout finished, all the following actions(resize，zoom) won’t disorder the layout without JS involved. It did it successfully with CSS.
 
 ```html
 <style>
@@ -361,7 +361,7 @@ Once this layout finished, all the following steps(resize，zoom) won’t disord
 <section>
     // 下一行的**表达式**是计算当图片以 200 的高度等比拉伸展示时宽度的值
     
-    Next line “expression” is used to calculate the width value when image width of 200 is stretched
+    // The expression is used to calculate the width value when image is 200 height
     
     <div ng-repeat="img in imgs" style="width:{{img.width*200/img.height}}px;"></div>
 </section>
@@ -369,16 +369,19 @@ Once this layout finished, all the following steps(resize，zoom) won’t disord
 
 到这里，我们才算实现了图片的非等宽布局。
 
-We achieve the images layout with非等宽.
+We achieve the images layout we expected.
 
 Demo，注意 html 模板里计算宽度的表达式：http://jsbin.com/tisaluy/4/edit?html,css,output
 
+Demo, notice the express in the template
+
 那么这个布局的展示效果究竟如何呢？
-What about the final effect of the layout?
+
+So, what about the final effect of the layout?
 
 实际上我专门写了代码计算每张图片被展示出来的比例到底有多少：在图片高度为 150px 左右时，约有三分之一的图片展示比例在 99% 以上。最差的图片展示比例一般在 70% 左右浮动，平均每张图片展示比例在 90% 以上。图片越矮，展示效果会越好；图片越高，展示效果就越差。
 
-I wrote the code to calculate the percentage of one image shows. When images height is about 150px, one third images can show 99% content. The worst effect of images can display about 70% content. So, in average, the display percentage of all images is about 90%. The display effect will be better if the image is shorter, and the display effect will be worse if the image is higher.
+Acturally I wrote the code to calculate the percentage of each image shows. When images height is about 150px, one third images can show 99% content. The worst effect of images can display about 70% content. So, in average, the display percentage of all images is about 90%. The display effect will be better if the image is shorter(less height), and the display effect will be worse if the image is higher(larger height).
 
 因为这种方案最后也被我抛弃了，所以就不放计算展示比例的 demo 了。
 
@@ -394,25 +397,25 @@ Because of the same height in every row, most images are not displayed completel
 
 可是正文从现在才正式开始，下面介绍的方式也是我在实现了上面的布局后很久才想出来的，前面的内容只是介绍一些解决边角问题用的。
 
-The real post start from here, below method came after the above method for a long while. Above content introduce the corner disposable.
+The real post start from here, below method came after the above method for a long while. The above content just introduce the corner cases solution.
 
 可以看到，前面的实现方式并没有让每张图片的内容全部都显示出来，因为每行的高度是一样的，而想要实现 500px 的布局，每行图片的高度很多时候是不一样的。
 
-We can see that above solution doesn’t make every image display completely. If you need accomplish  500px layout， the images height can’t be the same when the row height is the same.
+We can see that above solution doesn’t make every image display completely. If you need accomplish 500px layout, the height of each row is most likely to not equal to each other in 500px layout.
 
 一开始我觉得，CSS 也就只能实现到这种程度了吧，直到我遇到了另一个需求:
 
-For the start, I guessed CSS dealt with nothing more than these functions.
+For the start, I guessed CSS can dealt with nothing more than these functions.
 However, what I needed later proved me wrong.
 
 我想用一个正方形的容器展示内容，并且希望无论浏览器窗口多宽，这些正方形的容器总是能铺满窗口的水平宽度而不留多余的空间(除了元素之间的空白)，乍一看这个需求可能需要 JS 参与：读出当前浏览器窗口的宽度，然后计算正方形容器的 size，然后渲染。
 
-I try to display content with square container, the square container always spread with the window without spare room (except the blank between the elements) regardless of the browser window’s width. At first glance, this may require the JS participation: scan the browser window’s width first, then calculate the size of a square container, and rendering is needed in the end.
+I try to display content with square container, and I want the square container to always spread with the window without spare room (except the blank between the elements) regardless of the browser window’s width. At first glance, this may require the JS participation: scan the browser window’s width first, then calculate the size of a square container, and then render.
 
 可以看这个 demo，试着拉动一下窗口宽度然后看效果：
 http://jsbin.com/tomipun/4/edit?html,css,output
 
-This is the effect of the demo. Please scroll the window to see the effect.
+Open this demo to see the effect, try to resize or zoom the page.
 
 拉动过程中可以看到，正方形的容器会实时变大，大到一定程度后又变小让每行多出一个正方形容器。 如果只看这一个 demo，可能各位不一定能一下子想到如何实现的，但如果只有一个正方形容器，它的边长总是浏览器宽度的一半，想必很多人都知道的，**长宽比固定的容器**要怎么实现吧？
 
