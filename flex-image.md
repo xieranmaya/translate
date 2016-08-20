@@ -419,33 +419,33 @@ Open this demo to see the effect, try to resize or zoom the page.
 
 拉动过程中可以看到，正方形的容器会实时变大，大到一定程度后又变小让每行多出一个正方形容器。 如果只看这一个 demo，可能各位不一定能一下子想到如何实现的，但如果只有一个正方形容器，它的边长总是浏览器宽度的一半，想必很多人都知道的，**长宽比固定的容器**要怎么实现吧？
 
-During the process of scroll the window, the square container will grow in real-time. It will grow to a point, later it wanes. If we only focus on one demo, it’s hard to come up with the solution to achieve the fixed aspect ratios. But if there is a square container and its side length is the half of the browser width, you guys might know the solution.
+During the process of resize/zoom the page, the square container will grow or shrink in real-time but will always be square. It will grow to a point, later it wanes. If we only focus on one demo, it’s hard to come up with the solution to achieve the fixed aspect ratios. But if there is a square container and its side length is the half of the browser width, you guys might know the solution.
 
 我们知道(事实上很多人都不确定，所以这可以做为一个面试题)，margin 和 padding 的值如果取为百分比的话，这个百分比是相对于**父元素的宽度**的，也就是说，如果我给一个 block 元素设置 padding-bottom(当然，也完全可以是 padding-top，甚至可以两个一起用~)为 100% 的话，元素本身高度指定为 0，那么这个元素将始终是一个正方形，并且会随着容器宽度的变化而变化，想要改变正方形的大小，只需要改变父容器的宽度就可以了：
 
-We may know, if margin and padding value is measured by percentage, this value is relative to parent elements. Namely, block element is set to 100% padding-bottom and element height is set to 0, so this element will keep square and it will change with the container height. So, if we try to change the size of the square, we only need to change the width of the parent container first.
+We may know, if margin and padding value is given by percentage, this value is relative to it's parent elements. Namely, block element is set to 100% padding-bottom and element height is set to 0, so this element will keep square and it will change with the container height. So, if we try to change the size of the square, we only need to change the width of the parent container first.
 
 看这个的 demo:
 http://jsbin.com/lixece/1/edit?html,css,output
 拉动窗口可以看到色块会变大，但始终保持正方形。当然，如果参照物是浏览器窗口，那么在现代浏览中，这个效果可以用 vw / vh 实现；但如果参照物不是浏览器窗口，就只能用垂直 padding 来实现了。
 
-Please check this link. The color block will grow and it remains square while we scroll the window. If we take browser window as a reference, this effect can be achieved with vw / vh in modern browser. If not, we can choose vertical padding to accomplish.
+Please check this link. The color block will grow and it remains square while we resize the window. If we take browser window as a reference, this effect can be achieved with vw / vh in modern browser. If not, we can choose vertical padding to accomplish.
 
 于是我就想到，如果不给 flex item 的元素设置高度，而是让其被一个子元素撑开，并且这个子元素的宽度是100%，padding-bottom 也是 100%，那么 flex item 及这个用来撑大父元素的子元素就会同时保持为正方形了，于是就实现了上面的那种正方形阵列布局。
 
-Then it occurs to me, flex item element can be stretched by another flex item instead of setting height for it. And flex item width is 100% and padding-bottom is 100%, so both flex item and another flex item will keep square at the same time. As a result, above the square layout will be finished.
+Then it occurs to me, flex item element can be stretched by its child elemen item instead of setting height for it. And the child element's width is 100% and padding-bottom is 100%, so both flex item the child element will keep square at the same time. As a result, the above square layout will be finished.
 
 但仅仅这样还不够，最后一行又会出问题，如果最后一行的元素个数跟前面的行不一样的话，它们虽然会保持正方形，但是因为 grow 的关系，会比较大，那如何保证最后一行的元素也跟前面的行大小相同呢，这时使用一个元素并设置很大的 flex-grow 让其占满最后一行剩余空间的做法已经不可行了，因为我们需要让最后一行的元素**恰到好处**的跟前面行的元素 grow 时多出一样的空间。
 
-This is far away from the perfect result. If the element number in the last row differs from the number of the previous row, color block will be a larger square due to growing.How to make the last row’s elements stay the same with the previous row? It doesn’t work if we use a flex-grow element to fill the spare room in the last row. We need keep the same spare room of the previous row and the last row when their elements grow.
+This is far away from the perfect result. If the element number in the last row differs from the number of the previous rows, color block will be a larger square due to growing. How to make the last row’s elements stay the same with the previous row? It doesn’t work if we use a extra element and set a bit `flex-grow` value to fill the spare room in the last row. We need keep the same spare room of the previous row and the last row when their elements grow.
 
 其实解决方案也很简单，把最后一行不当最后一行就行了！此话怎讲呢？
 
-To be honest, the solution is simple. Let’s add another new row to the last row.
+To be honest, the solution is simple. We treat the last row to be not the last row.
 
 在最后添加多个占位符，保证可见的最后一个元素永远处于视觉上的最后一行，而让占位符占据真正的最后一行，然后把这些占位符的高度设置为 0 。具体添加多少个占位符呢？显然是一行最多能显示多少个元素，就添加多少个了，比如前面的 demo 就添加了 8 个占位符，你可以在源代码里面看一下。另外为了更好的语义，其实可以用其它的标签当做占位符。
 
-In the end of those elements, adding more placeholders to let the last elements to be in the visual last row. And the placeholders occupied the real last row. Then change the placeholder height to be 0. How many placeholders we need? The number should stay the same with the maximum of elements per row. Such as, the above demo has 8 extra placeholders which you can check in the SC. For better semantic meaning, we can have other marks to be placeholders.
+In the end of those elements, adding more placeholders to let the last elements to be in the visual last row. And the placeholders occupied the real last row. Then change the placeholder height to be 0. How many placeholders we need? The number should stay the same with the posible maximum of elements per row. Such as, the above demo has 8 extra placeholders which you can check in the source code. For better semantic meaning, we can have other class to be placeholders.
 
 这样一来，始终能占满水平宽度的正方形阵列布局也实现了。
 
@@ -453,40 +453,40 @@ In this way, the square layout which fills in the horizontal width can be accomp
 
 本来我以为，到这里就结束了，即使用上最先进的 flexbox 布局，CSS 也无法实现图片不裁减的完美布局。
 
-Although the most advanced flexbox layout is adopted, CSS can’t accomplish the perfect layout without cropping. So, I thought may essay might stop here.
+Although the most advanced flexbox layout is adopted, CSS can’t accomplish the perfect layout without cropping. So, I thought the essay might stop here.
 
 ### - FAKE EOF -
 
 4 月 2 号的早上我醒来的时候，突然想到，既然可以让一个容器始终保持正方形，那岂不是也可以让这个容器始终保持任何比例？显然是可以的，只要我们把用于撑大父元素的那个元素的 padding-bottom 设置为一个我们想要的值就可以了！这样一来，说不定可以实现图片布局中，所有图片都完全展示且占满水平宽度的布局（也就是 Google Photos / 500px 的布局）！
 
-When I woke up On the morning of April 2，an idea came into my mind that since you can always keep the container in a square, would it  mean that you can remain it in any proportion? certainly yes,we only have to set the padding-bottom of the element for stretching parent element a value  we want ! In this way, maybe the layout can be achieved that all the pictures can be shown and completely fill the horizontal width , that is layout of Google Photos / 500px!
+When I woke up On the morning of April 2，an idea came into my mind that since you can always keep the container in a square, would it mean that you can remain it in any proportion? certainly yes, we only have to set the padding-bottom of the child element for stretching its parent element a value we want! In this way, maybe the layout can be achieved that all the pictures can be shown and completely fill the horizontal width, which is the layout of Google Photos / 500px!
 
 当然，前面提到过，由于图片加载缓慢，图片布局往往都会提前知道图片的宽高来进行容器的预渲染，然后图片加载完成后直接放进去。
 
 所以这里我们仍然需要用 JS 或者服务器来计算一下图片的宽高比例，然后设置到 padding-bottom 上面去，以保证容器的宽高比始终是其内部图片的宽高比。
 
 
-Certainly, as I mentioned earlier, because of the slow image loading, the image layouts often know the width and height of the image in advance to pre-render  the container , and then directly put into it after the image is loaded. 
-So  we still need JS or server to calculate the image aspect ratio, and then set it in the padding-bottom to  ensure that the aspect ratio of the container is always the same to its ernal images.
+Certainly, as I mentioned earlier, because of the slow loading of images, the image layouts should often know the width and height of the image in advance to pre-render the container, and then directly put the image into it after the image is loaded/loading. 
+So we still need JS or server to calculate the image aspect ratio, and then set it in the padding-bottom to ensure that the aspect ratio of the container is always the same to its internal images.
 我们先让所有图片以 200px 的高度展示，写出如下模板代码：
 
-let all the pictures shown in the height of 200px, as shown below:
+First we let all the pictures shown in the height of 200px, as shown below:
 ```html
 <div style="display:flex;flex-wrap:wrap;">
   <div ng-repeat="img in imgs" style="width:{{img.width*200/img.height}}px;">这个公式计算了图片高度为200时的宽度的值
   
- This formula  calculate the value of the width of the image when the height is 200
+ This formula calculate the value of the width of the image when the height is 200
   
     <div style="padding-bottom:{{img.height/img.width*100}}%"></div>这个公式让此元素及其父元素的比例与图片原始比例相同，因为是垂直方向的 padding，所以是高度除以宽度
     
-    The formula for the proportion of the element and its parent element's is the same as the  proportion of the original images, because it is vertical padding, so it is height divided by the width.
+    This formula set the proportion of the element and its parent element's is the same as the proportion of the original images, because it is vertical padding, so it is height divided by the width.
   </div>
 </div>
 ```
 
 在上面布局中，因为 flex-wrap 的关系，每一行不够放的时候后面的内容就会折行，并且留出一些空白，每个容器的宽高比都是跟未来放入其内部的图片的宽高比是一样的，为了便于展示，我将图片大小设置为容器大小的四分之一，应该明显可以看出图片的右下角处于容器的中心位置。
 
-In the above layout, because of the flex-wrap, every row will line wrap and be more spare room if there are too many codes. Every container aspect ratio stays the same with the subsequent inner images aspect ratio. 
+In the above layout, because of the flex-wrap, every row will line wrap and be more spare room if there are too many images in one row. Every container aspect ratio stays the same with the subsequent inner images aspect ratio. 
 
 Demo: http://jsbin.com/tisaluy/5/edit?html,css,output
 
@@ -505,13 +505,15 @@ If we set the flex-grow of flex item to 1, the container proportion is different
 
 通过一些简单的计算我们会发现，每行图片高度一致的时候，每张图片在水平方向上占用的宽度正好是其宽度在这一行所有图片宽度之和中所占的比例。
 
+
+
 在前面不 grow 的情况下，每张图片的容器的宽度已经是按比例分配了，而每行的剩余空间，我们希望它仍然按照目前容器宽度所占的比例来分配，于是，每个容器的 grow 的值，正好就是它的宽度，只不过不要 px 这个单位。
 
-The width of every images container is prorating distribution without growing. And we hope the spare room in every row can be allocated by current proportion of the container width. Every growth of container is its width and gets rid of PX.  
+The width of every images container is prorating distribution without growing. And we hope the spare room in every row can be allocated by current proportion of each container width. Every growth of container is its width and gets rid of PX.  
 
 最终的代码如下:
 
-The final code is:
+The final code below:
 
 ```html
 <div>flex，wrap
@@ -522,11 +524,11 @@ The final code is:
 </div>
 ```
 
-In fact, flex-grow is allocated by proportion, so the “*200”in the second formula can be deleted and revised the first “200”.
+In fact, flex-grow is allocated by proportion, so the “*200”in the second formula can be deleted.
 
 这样一来，容器会占满当前行，并且保持与未来内部所放入的图片相同的宽高比：
 
-As a result, the current line will be filled with the container, and  the same aspect ratio will be kept as the internal image which will put into the container subsequent :
+As a result, the current line will be filled with the container, and the same aspect ratio will be kept as the internal image which will put into the container subsequent:
 
 Demo: http://jsbin.com/tisaluy/8/edit?html,css,output
 
@@ -536,9 +538,9 @@ Demo: http://jsbin.com/tisaluy/8/edit?html,css,output
 
 到这里，我们终于实现了类似 Google Photos / 500px 网站的图片布局。
 
-As for how to deal with the last line, you can use a great element of flex-grow  to fill the remaining space just as I described above.
+As for how to deal with the last line, you can use a great element whose flex-grow setting large to fill the remaining space just as I described above.
 After rendering the layout, you can rest assured resize and zoom, layout will not be disturbed, and there is no JS participation.
-Here, we finally achieve a image layout similar to Google Photos or 500px .
+Here, we finally achieve an image layout similar to Google Photos or 500px .
 
 总结一下这个方案的原理：
 
@@ -546,10 +548,11 @@ Here, we finally achieve a image layout similar to Google Photos or 500px .
 2. 使用 flex-grow 来按图片宽度所占的比例分配水平空间
 3. 使用宽高比固定的子元素撑大带有指定比例 flex-grow 的 flex item 以实现不同行高度不一样并保持宽高比
 
-Summarize the principles of this program:
-1.When padding and margin are percentage ,the width of the container are used as a reference.
-2.Use the flex-grow to allocate horizontal space according to the proportion of the image width  
-3.Use the child elements with fixed aspect ratio  stretch with a specified proportion of flex-grow to achieve different row height and keep the same the aspect ratio.
+Summarize of the principles of this solution:
+
+1. When padding and margin are percentage, the width of its container are used as a reference.
+2. Use the flex-grow to allocate horizontal space according to the proportion of the image width  
+3. Use the child elements with a fixed aspect ratio stretch with a specified proportion of flex-grow to achieve different row height and keep the same the aspect ratio.
 
 这种布局的优点：
 
@@ -557,24 +560,25 @@ Summarize the principles of this program:
 * 不需要在 resize，room 时重新计算布局
 * CSS 的方案容易跟任何框架集成
 * 
-Advantages of the deployment:
-No special algorithm are required to compute the information like height or width of each image  after rendering 
-do not need to recalculate the layout during resize or room
-CSS programs are easily integrated with any framework
+
+Advantages of this layout:
+
+* No special algorithm are required to compute the information like height or width of each image after rendering 
+* Do not need to recalculate the layout during resize or zoom
+* CSS solution is easily to integrate with any framework
 
 最后说一下这种方案的一些缺点：
 
-Finally, we will talk about some of the shortcomings of this :
+Finally, we will talk about some of the shortcomings of this solution:
 
 * 很明显，我们只能指定每行图片的最低高度，然后等着它 grow，并没有办法指定每行高度的上限是多少。虽然我们可以设置一下容器的 max-height，这样一来被 max-height 影响的那些容器里面的图片就展示不完全了。实际上只要图片的比例都在一个正常的范围，是不会出现某一行的高度过高的
-* 
-obviously, we can only define a minimum height of the images in each row, and then wait for it to grow, and there is no way to specify the height of each row of the upper limit is. although we can set up the max-height of the , the images of the container  affected by max-height will not display completely. In fact, as long as the ratio of the picture are in a normal range,  a single row             could hardlyhave occurredi
+* obviously, we can only define a minimum height of the images in each row, and then wait for it to grow, and there is no way to specify the height of each row of the upper limit is. although we can set up the max-height of them , the images of the container affected by max-height will not display completely. In fact, as long as the ratio of the picture are in a normal range,  a single row could hardlyhave occurredi
 * 在遇到比例超出某个范围的图片时可以只用我们允许的最大比例展示这张图片，比如说遇到了一张 1:5 的图片，我们只以 1:3 的区域来展示它。或者也可以调整一下图片的顺序，但这就需要 JS 参与了。 [500px 的这个搜索结果页面](https://500px.com/search?q=bread+making+is+an+art&type=photos&sort=relevance)貌似就是这么做的，试着把窗口宽度调小，会发现第一张后面的图片展示不完全，因为如果展示完全的话，单张图片就占用了太大的屏幕面积，所以它限定了高度。
 * 
  the highest aspect ratio we  allowed can  be used when we Encounters the image that exceed a certain number or parameter. for example, met with a 1: 5 images, we only 1: 3 area to show it  Or you can adjust the order of the images, but this requires JS calculation. The search result page “500px” seemingly work in this way. if you try to adjust the window width  is small, you will find the images behind the first picture cannot display complete, because if it display completely,  a single image will take up too large screen space,  it defines the height.
 * 另外，最后一行的图片如果几乎要占满那一行时，因为占位符的存在，并不会占满，会显得不太理想（读者可以调整窗口宽度观察上面的完整 demo）。这种情况如果是使用 JS 计算的话，是可以避免的：在发现最后一行几乎要占满时，直接让其占满最后一行。
 
- In addition, that are not likely to be ideal, because even if the images in last line nearly fill it,  it can not  because of placeholders, (you can adjust the width of the window to observe the complete demo above).but this situation can be avoided, If JS calculation are used : when the last line almost filled, just fill it.
+* In addition, that are not likely to be ideal, because even if the images in last line nearly fill it,  it can not  because of placeholders, (you can adjust the width of the window to observe the complete demo above).but this situation can be avoided, If JS calculation are used : when the last line almost filled, just fill it.
 * 我们在提到评价图片布局优劣的标准时候说到，每张图片展示区域越接近，评分应该也越高。理论上如果使用 JS 来计算布局，可以在算法上做如下优化：如果一行中比较高的图片比较多，那么这一行就少放些图片，留出更多的空间用来放大图片，这样就能让高图和宽图显示面积更接近一些了。而用 CSS 的方案如果不改变图片顺序就没法做这种优化了。不过如果不改变图片顺序，即使算法做了这些优化，出现在高图比较多的行里的宽图，展示面积会更大，会出现一种比例失调的情况，也不够完美。
 
 When it comes to The standard of image layout, the closer every image dispay, the higher score it should be. In theory ,if you use JS to compute the layout,  the following optimal algorithm can be use : if more higher pictures in a row, less pictures should be put in it, then   more space can leave for larger the picture, so that the display areas of the  higher and larger  images will be closer to each other. But the optimization can not achive on css if you do not  change the order of the pictures would not be able to do this kind of optimization. But if you do not change the order of the images, even if the algorithm are optimized , the display areas of the wider images will be larger in the row which have more higher images,it also not perfect because of imbalance.
