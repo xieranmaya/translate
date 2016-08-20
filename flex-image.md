@@ -203,26 +203,26 @@ Next, we change the DOM structure to this :
 我们为图片增加了一个容器。依然把图片设置为定高，如此一来，每个 div 将被图片撑大，这时如果我们给 div 设置一个 flex-grow: 1; ，每个 div 将平分每行剩余的空间，div 会变宽，于是图片宽度并没有占满 div，如果我们将 img 的 width 设置为 100% 的话，在 IE 和 FF 下，div 已经 grow 的空间将不会重新分配（**我觉得这是个很有意思的现象，图片先把 div 撑大，div grow 之后又把图片拉大**），但在 Chrome 下，为 img 设置了 width: 100%; 之后，grow 的空间将被重新分配（我并没有深究具体是如何重新分配的），会让每个容器的宽度更加接近，这并不是我们想要的。试了几种样式组合后，我发现把 img 标签的 min-width 和 max-width 都设置为 100% 的话，在 Chrome 下的显示效果就跟 IE 和 FF 一样了。最后我们将 img 的 object-fit 属性设置为 cover，图片就被等比拉伸并占满容器了，不过与前一种布局一样，每行的高度是一样的，另外图片只显示了一部分，上下两边都被裁剪掉了一些。
 
 We added a container for each image. Firstly, the rated height is set well, and every `div` will be stretched by image. Next, if we set a `flex-grow: 1` for the `div`s, extra spaces in each row will be divided equally by each `div`. Then the `div` will be wider, but the image width can't fill in the div completely. If we set the image width to 100%, the growed space will not be redivid by `div` in IE and FF.(I personally think this is very interesting, the image stretch div first, then the `div`'s grow stretchs the image). But in Chrome, setting 100% width for image will cause the extra space in each row to reallocate. Which in result makes every container's width to more likely the same. However, it’s not what we want. After several combinations of css property, I almost did it. If we set the image's `min-width` and `max-width` to 100% at the same time, the display effect in Chrome will be the same with IE and FF. Lastly, we set the image's `object-fit` property to `cover`, and the image will fill in the container with equal proportional stretch.
-This method still is not perfect just like the former one. The image height is the same, but partial image has been clip for no reason.
+This method still is not perfect just like the former one. The image height is the same, but partial image has been clip for obvious reason.
 
 
 
 
 上面布局完整的 demo: http://jsbin.com/tisaluy/2/edit?html,css,output
 
-The entire demo of above layout:
+The entire demo of the above solution:
 
 在这种布局下，如果图片高度设置的比较小，布局已经没有什么大碍，因为图片越小就意味着每行图片越多而且剩余的空间越小并且剩余空间被更多的图片瓜分，那每个容器的宽高比就越接近图片的真实宽高比，多数图片都能显示出其主要部分。
 
-If the image height value is set small, above layout is roughly right. There will be smaller images in every row, so left space will be less and easier to be divided by other images. In this way, the depth-width ratio is more close to the real image depth-width ratio. Most of images can display the main content.
+If the image height value is set to a small value, the above layout is roughly right. There will be more images in every row, so left space will be less and easier to be divided by more images. In this way, the ratio of every container will be more close to the real image ratio. Most of images can display the main content.
 
 唯一的问题是最后一行，当最后一行图片太少的时候，比如只有一张，因为 grow 的关系，它将占满一整行，而高度又只有我们设置的 200px，这时图片被展示出来的部分可能是非常少的，更不用说如果图片本身上比较高，而展示区域又非常宽的情况了。
 
-The only problem occurs in the last line. When the last line only has few images, it will fill in the whole line due to grow. However, our height is set 200px, so the display area will be less of images. The situation will be worse when the image is higher and the display is wider.
+The only problem occurs in the last line. When the last line only has few images, it will fill in the whole line due to grow. However, our height is set 200px, so the display area will be less of images. The situation will be worse when the image is higher and the display area(which is the container) is wider.
 
 针对这种情况，我们可以让列表最后的几张图片不 grow，这样就不至于出现太大的变形，我们可以算出每行的平均图片数量，然后用
 
-The solution for this situation is to let the last few images not grow. We can calculate the average images in every row in case of distorting terribly. 
+The solution for this situation is to let the last few images to not grow. We can calculate the average images in every row in case of distorting terribly. 
 
 ```css
 div:nth-last-child(5),
@@ -235,7 +235,8 @@ div:nth-last-child(1){
 ```
 
 然后配合 media query，在屏幕不同宽度时，让"最后一行"的元素个数在窗口宽度变化时也动态变化:
-and media query is adopted here. when the screen have different width, the number of elemnets in the last row will change with the window's width.
+
+and media query is adopted here. when the screen have different width, the number of elemnets in the last row will change with the window's width:
 
 ```css
 @media (max-width: 1000px) and (min-width: 900px) {
@@ -262,11 +263,11 @@ and media query is adopted here. when the screen have different width, the numbe
 
 上面的代码写起来是相当麻烦的，因为每个屏幕宽度范围内又要写多个 nth-last-child 选择器，虽然我们可以用预处理器来循环迭代出这些代码，但最终生成出来的代码还是有不少重复。
 
-Every certain width have to be more “nth-last-child” selectors so that above code is rather complex. We can apply preprocessor to loop this code, but there are still many repetitious codes generated.
+Every certain width have to be more “nth-last-child” selectors so that above code is rather complex. We can apply preprocessor to loop out this code, but there are still many repetitious codes generated.
 
 有没有办法只指定最后多少个元素就行了，而不是写若干个 nth-last-child 选择器呢？其实办法也是有的，想必大家应该还记得 CSS 的 `~` 操作符吧，`a ~ b` 将选择在 `a` 后面且跟 `a` 同辈的所有匹配 `b` 的元素，于是我们可以这么写:
 
-Is there a way just appoint some elements instead of several “nth-last-child” selectors? The answer is yes. Here we should mention the “~”operator in CSS. Let’s write:
+Is there any way to just appoint some elements instead of several “nth-last-child” selectors? The answer is yes. Here we should mention the “~” operator in CSS. Let’s write:
 
 ```css
 div:nth-last-child(8),
@@ -277,7 +278,7 @@ div:nth-last-child(8) ~ div{
 
 先选中倒数第 8 个元素，然后选中倒数第 8 个元素后面的所有同辈结点，这样，就选中了最后的 8 个元素，进一步，我们可以直接将选择器改写为`div:nth-last-child(9) ~ div`，就可以只用一个选择器选择最后的 8 个元素了。
 
-First, we can select the eighth last element. Then the fellow node after the eighth last element can be selected. Finally, the last eight elements are selected successfully. Furthermore, we can rewrite the selector to “div:nth-last-child(9) ~ div”, and we may select the last eight elements only with one selector.
+First, we can select the eighth last element. Then the following node after the eighth last element can be selected. Finally, the last eight elements are selected successfully. Furthermore, we can rewrite the selector to “div:nth-last-child(9) ~ div”, and we may select the last eight elements only with one selector.
 
 上面的几种选择尾部一些元素的不同选择器，实际上效果是不太一样的：
 
@@ -287,8 +288,8 @@ The real effect varies from the different selectors we chose in the above rear e
 * `div:nth-last-child(n), div:nth-last-child(n) ~ div` 只能保证当 div 元素至少有 n 个时才能选中最后的 n 个元素，因为如果 `:nth-last-child(n)` 不存在，这个选择器就无效了
 * `div:nth-last-child(n+1) ~ div` 则需要保证 div 元素至少有 n+1 个时才能选中最后的 n 个元素，原理同上
  
- “div:nth-last-child”, this method can make the last N images selected
- “div:nth-last-child(n), div:nth-last-child(n) ~ div”, this method only make sure there must be more than N div       elements, so the last N elements can be selected. The selector no working if there is no“nth-last-child(n). 
+ “div:nth-last-child(1),div:nth-last-child(2),...,div:nth-last-child(n)”, this method can make the last N images always selected
+ “div:nth-last-child(n), div:nth-last-child(n) ~ div”, this method only make sure there must be more than N div       elements, so the last N elements can be selected. The selector will no working if "nth-last-child(n)" select nothine.
  “div:nth-last-child(n+1) ~ div” , this method have to make sure there must be more than N+1 div elements, so the last N+1 elements can be selected
 
 
