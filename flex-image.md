@@ -463,14 +463,15 @@ When I woke up on the morning of April 2，an idea came into my mind that since 
 
 当然，前面提到过，由于图片加载缓慢，图片布局往往都会提前知道图片的宽高来进行容器的预渲染，然后图片加载完成后直接放进去。
 
+Certainly, as I mentioned before, because of the slow loading of images, the image layouts should often know the width and height of the image in advance to pre-render the container, and directly put the image into it after the image is loaded. 
+
 所以这里我们仍然需要用 JS 或者服务器来计算一下图片的宽高比例，然后设置到 padding-bottom 上面去，以保证容器的宽高比始终是其内部图片的宽高比。
 
-
-Certainly, as I mentioned earlier, because of the slow loading of images, the image layouts should often know the width and height of the image in advance to pre-render the container, and then directly put the image into it after the image is loaded/loading. 
-So we still need JS or server to calculate the image aspect ratio, and  set it in the padding-bottom to ensure that the aspect ratio of the container is always the same to its internal images.
+So we still need JS or server to calculate the image aspect ratio, and set it in the padding-bottom to ensure that the aspect ratio of the container is always the same to its internal images.
 我们先让所有图片以 200px 的高度展示，写出如下模板代码：
 
-First we display the pictures in the height of 200px, as shown below:
+Firstly, we display all the images in the height of 200px, as shown below:
+
 ```html
 <div style="display:flex;flex-wrap:wrap;">
   <div ng-repeat="img in imgs" style="width:{{img.width*200/img.height}}px;">这个公式计算了图片高度为200时的宽度的值
@@ -479,15 +480,15 @@ First we display the pictures in the height of 200px, as shown below:
   
     <div style="padding-bottom:{{img.height/img.width*100}}%"></div>这个公式让此元素及其父元素的比例与图片原始比例相同，因为是垂直方向的 padding，所以是高度除以宽度
     
-    This formula set the proportion of the element and its parent element is the same as the proportion of the original images, because it is vertical padding,it is height divided by the width.
+    This formula set the proportion of the element and its parent element the same as the original proportion of the image. because it is vertical padding,it is the height divided by the width.
   </div>
 </div>
 ```
 
 在上面布局中，因为 flex-wrap 的关系，每一行不够放的时候后面的内容就会折行，并且留出一些空白，每个容器的宽高比都是跟未来放入其内部的图片的宽高比是一样的，为了便于展示，我将图片大小设置为容器大小的四分之一，应该明显可以看出图片的右下角处于容器的中心位置。
 
-In the above layout, because of the flex-wrap, every row will break the line and leave more spare room if there are too many images in one row. Every aspect ratio of the container stays the same with the images will put into it.
-For demonstration purpose， I will set the picture size a quarter of the container, it should be clear that the lower right corner of the image is at the center of the container.. 
+In the layout above, because of the flex-wrap, every row will be breaked  and  more spare room will be left if there are too many images in one row. The aspect ratio of each container stays the same with the images will put into it.
+For demonstration purpose，I will set the size of the image a quarter of the container, it should be clear that the lower right corner of the image is at the center of the container.. 
 
 Demo: http://jsbin.com/tisaluy/5/edit?html,css,output
 
@@ -497,7 +498,7 @@ Next, we need to make all the elements grow. Could we set their flex-grow to 1?
 
 实际上如果设置了并看了效果，我们会发现并不是，因为我们希望每行元素在 grow 的时候，保持原有比例且高度相同。
 
-In fact, if we tried and saw the result, we will know 1 is not right. Because we need every row can stay the same proportion and height when it grows
+In fact, if we tried, we will know 1 is not right. Because we need every row can stay the same proportion and height when it grows
 
 Demo：http://jsbin.com/tisaluy/6/edit?html,css,output
 可以看到如果给所有的 flex item 设置 flex-grow: 1; 的话，容器跟图片的比例并不一致，这里我将图片宽度设置了为容器的宽度以便观察。
@@ -505,12 +506,12 @@ Demo：http://jsbin.com/tisaluy/6/edit?html,css,output
 If we set the flex-grow of flex item to 1, the container proportion is different from the images. I set the images height to the container’s height for better observation. 
 
 通过一些简单的计算我们会发现，每行图片高度一致的时候，每张图片在水平方向上占用的宽度正好是其宽度在这一行所有图片宽度之和中所占的比例。
-Through some simple calculations,we will find that the width of every image in the horizontal direction is just  the percentage of its with of with of the row.
+Through some simple calculations,we will find that the width of each image in the horizontal direction is just the percentage that its with from the total with of all images in this row.
 
 
 在前面不 grow 的情况下，每张图片的容器的宽度已经是按比例分配了，而每行的剩余空间，我们希望它仍然按照目前容器宽度所占的比例来分配，于是，每个容器的 grow 的值，正好就是它的宽度，只不过不要 px 这个单位。
 
-In the case of the front does not grow, the width of the container of each picture been prorated, while the remaining space of each line, we also want it to distribute in the current proportion of the width of the container to , so the value each container grow,  is just its width, but not in px.
+In the case that it were not to grow, the  the container width of each picture would been prorated. while the remaining space of each line, we also want it to distribute in the current proportion of the width of the container, so the value of each container grow,  is just its width, but not in the unit px.
 最终的代码如下:
 
 The final code are shwon as:
@@ -523,12 +524,13 @@ The final code are shwon as:
   </div>
 </div>
 ```
+In fact, flex-grow is allocated by proportion, so the “*200”in the second formula is not required.
+we just wold need to change the previous “*200”
 
-In fact, flex-grow is allocated by proportion, so the “*200”in the second formula can be deleted.
 
 这样一来，容器会占满当前行，并且保持与未来内部所放入的图片相同的宽高比：
 
-As a result, the current line will be filled with the container, and the same aspect ratio will be kept as the internal image which will put into the container subsequent:
+As a result, the current line will be filled with the container, and the same aspect ratio will be kept as the internal image which will put into the container:
 
 Demo: http://jsbin.com/tisaluy/8/edit?html,css,output
 
@@ -538,8 +540,8 @@ Demo: http://jsbin.com/tisaluy/8/edit?html,css,output
 
 到这里，我们终于实现了类似 Google Photos / 500px 网站的图片布局。
 
-As for how to deal with the last line, you can use a great element whose flex-grow setting large to fill the remaining space just as I described above.
-After rendering the layout, you can rest assured resize and zoom, layout will not be disturbed, and there is no JS participation.
+As for how to deal with the last line, you can use a great element of flex-grow to fill the remaining space just as I described above.
+After rendering the layout, you can feel rest  assured to resize and zoom,even without JS,the layout will not be in disorder.
 Here, we finally achieve an image layout similar to Google Photos or 500px .
 
 总结一下这个方案的原理：
