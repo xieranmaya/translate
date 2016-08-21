@@ -459,7 +459,7 @@ Although the most advanced flexbox layout is adopted, CSS can’t accomplish the
 
 4 月 2 号的早上我醒来的时候，突然想到，既然可以让一个容器始终保持正方形，那岂不是也可以让这个容器始终保持任何比例？显然是可以的，只要我们把用于撑大父元素的那个元素的 padding-bottom 设置为一个我们想要的值就可以了！这样一来，说不定可以实现图片布局中，所有图片都完全展示且占满水平宽度的布局（也就是 Google Photos / 500px 的布局）！
 
-When I woke up On the morning of April 2，an idea came into my mind that since you can always keep the container in a square, would it mean that you can remain it in any proportion? certainly yes, we only have to set the padding-bottom of the child element for stretching its parent element a value we want! In this way, maybe the layout can be achieved that all the pictures can be shown and completely fill the horizontal width, which is the layout of Google Photos / 500px!
+When I woke up on the morning of April 2，an idea came into my mind that since you can always keep the container in a square, would it mean that you can remain it in any proportion? certainly yes, we only have to set the padding-bottom of the child element which is stretching its parent element a value we want! In this way, maybe the layout can be achieved that all the pictures can be shown and completely fill the horizontal width, which is the layout of Google Photos / 500px!
 
 当然，前面提到过，由于图片加载缓慢，图片布局往往都会提前知道图片的宽高来进行容器的预渲染，然后图片加载完成后直接放进去。
 
@@ -467,32 +467,33 @@ When I woke up On the morning of April 2，an idea came into my mind that since 
 
 
 Certainly, as I mentioned earlier, because of the slow loading of images, the image layouts should often know the width and height of the image in advance to pre-render the container, and then directly put the image into it after the image is loaded/loading. 
-So we still need JS or server to calculate the image aspect ratio, and then set it in the padding-bottom to ensure that the aspect ratio of the container is always the same to its internal images.
+So we still need JS or server to calculate the image aspect ratio, and  set it in the padding-bottom to ensure that the aspect ratio of the container is always the same to its internal images.
 我们先让所有图片以 200px 的高度展示，写出如下模板代码：
 
-First we let all the pictures shown in the height of 200px, as shown below:
+First we display the pictures in the height of 200px, as shown below:
 ```html
 <div style="display:flex;flex-wrap:wrap;">
   <div ng-repeat="img in imgs" style="width:{{img.width*200/img.height}}px;">这个公式计算了图片高度为200时的宽度的值
   
- This formula calculate the value of the width of the image when the height is 200
+ This formula calculate the value of the image width when its height is 200
   
     <div style="padding-bottom:{{img.height/img.width*100}}%"></div>这个公式让此元素及其父元素的比例与图片原始比例相同，因为是垂直方向的 padding，所以是高度除以宽度
     
-    This formula set the proportion of the element and its parent element's is the same as the proportion of the original images, because it is vertical padding, so it is height divided by the width.
+    This formula set the proportion of the element and its parent element is the same as the proportion of the original images, because it is vertical padding,it is height divided by the width.
   </div>
 </div>
 ```
 
 在上面布局中，因为 flex-wrap 的关系，每一行不够放的时候后面的内容就会折行，并且留出一些空白，每个容器的宽高比都是跟未来放入其内部的图片的宽高比是一样的，为了便于展示，我将图片大小设置为容器大小的四分之一，应该明显可以看出图片的右下角处于容器的中心位置。
 
-In the above layout, because of the flex-wrap, every row will line wrap and be more spare room if there are too many images in one row. Every container aspect ratio stays the same with the subsequent inner images aspect ratio. 
+In the above layout, because of the flex-wrap, every row will break the line and leave more spare room if there are too many images in one row. Every aspect ratio of the container stays the same with the images will put into it.
+For demonstration purpose， I will set the picture size a quarter of the container, it should be clear that the lower right corner of the image is at the center of the container.. 
 
 Demo: http://jsbin.com/tisaluy/5/edit?html,css,output
 
 下一步，我们只需要让所有的元素 grow 就可以了，那么是把所有的元素的 flex-grow 设置为 1 吗?
 
-Next, we need all the elements grow. Could we set flex-grow to 1?
+Next, we need to make all the elements grow. Could we set their flex-grow to 1?
 
 实际上如果设置了并看了效果，我们会发现并不是，因为我们希望每行元素在 grow 的时候，保持原有比例且高度相同。
 
@@ -504,16 +505,15 @@ Demo：http://jsbin.com/tisaluy/6/edit?html,css,output
 If we set the flex-grow of flex item to 1, the container proportion is different from the images. I set the images height to the container’s height for better observation. 
 
 通过一些简单的计算我们会发现，每行图片高度一致的时候，每张图片在水平方向上占用的宽度正好是其宽度在这一行所有图片宽度之和中所占的比例。
-
+Through some simple calculations,we will find that the width of every image in the horizontal direction is just  the percentage of its with of with of the row.
 
 
 在前面不 grow 的情况下，每张图片的容器的宽度已经是按比例分配了，而每行的剩余空间，我们希望它仍然按照目前容器宽度所占的比例来分配，于是，每个容器的 grow 的值，正好就是它的宽度，只不过不要 px 这个单位。
 
-The width of every images container is prorating distribution without growing. And we hope the spare room in every row can be allocated by current proportion of each container width. Every growth of container is its width and gets rid of PX.  
-
+In the case of the front does not grow, the width of the container of each picture been prorated, while the remaining space of each line, we also want it to distribute in the current proportion of the width of the container to , so the value each container grow,  is just its width, but not in px.
 最终的代码如下:
 
-The final code below:
+The final code are shwon as:
 
 ```html
 <div>flex，wrap
