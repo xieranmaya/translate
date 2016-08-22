@@ -123,7 +123,7 @@ After some trial, I found a way to achieve similar layout only by CSS in some ex
 
 下面就来介绍一下我是如何只通过 CSS 一步一步实现的这个布局的
 
-Next, I will introduce the implementation step by step to achieve this layout with pure CSS.
+Next, I will introduce the the entire attempt I tried step by step to achieve this layout with pure CSS.
 
 一开始，我们将图片设置为相同的高度:
 
