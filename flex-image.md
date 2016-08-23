@@ -564,47 +564,49 @@ Summarize of the principles of this solution:
 
 1. When padding and margin are percentage, the **width** of its container are used as a reference.
 2. Use the flex-grow to allocate extra horizontal space according to the proportion of the image width  
-3. Use the child elements with a fixed aspect ratio stretch with a specified proportion of flex-grow to achieve different row height and keep the same the aspect ratio.
+3. Use the child elements with a fixed aspect ratio to stretch its parent and keep it to the same the aspect ratio.
 
 这种布局的优点：
 
 * 不需要特殊的算法去计算每张图片渲染之后的宽高等信息
 * 不需要在 resize，room 时重新计算布局
 * CSS 的方案容易跟任何框架集成
-* 
 
 Advantages of this layout:
 
-* No special algorithm are required to compute the information like height or width of each image after rendering 
+* No special algorithm are required to compute the information like height or width of each image before rendering 
 * Do not need to recalculate the layout during resize or zoom
-* CSS solution is easily to integrate with any framework
+* CSS solution is easy to integrate with any framework
 
 最后说一下这种方案的一些缺点：
 
 Finally, we will talk about some of the shortcomings of this solution:
 
 * 很明显，我们只能指定每行图片的最低高度，然后等着它 grow，并没有办法指定每行高度的上限是多少。虽然我们可以设置一下容器的 max-height，这样一来被 max-height 影响的那些容器里面的图片就展示不完全了。实际上只要图片的比例都在一个正常的范围，是不会出现某一行的高度过高的
-* obviously, we can only define a minimum height of the images in each row, and then wait for it to grow, and there is no way to specify the height of each row of the upper limit is. although we can set up the max-height of them , the images of the container affected by max-height will not display completely. In fact, as long as the ratio of the picture are in a normal range,  a single row could hardlyhave occurredi
+
+* obviously, we can only define a minimum height of the images in each row, and then wait for it to grow, and there is no way to specify the height of each row's upper limit. although we can set up the max-height of them , the images of the container affected by max-height will not display completely. In fact, as long as the ratio of the picture are in a normal range, a single row could hardly have too large height.
+
 * 在遇到比例超出某个范围的图片时可以只用我们允许的最大比例展示这张图片，比如说遇到了一张 1:5 的图片，我们只以 1:3 的区域来展示它。或者也可以调整一下图片的顺序，但这就需要 JS 参与了。 [500px 的这个搜索结果页面](https://500px.com/search?q=bread+making+is+an+art&type=photos&sort=relevance)貌似就是这么做的，试着把窗口宽度调小，会发现第一张后面的图片展示不完全，因为如果展示完全的话，单张图片就占用了太大的屏幕面积，所以它限定了高度。
-* 
- the highest aspect ratio we  allowed can  be used when we Encounters the image that exceed a certain number or parameter. for example, met with a 1: 5 images, we only 1: 3 area to show it  Or you can adjust the order of the images, but this requires JS calculation. The search result page “500px” seemingly work in this way. if you try to adjust the window width  is small, you will find the images behind the first picture cannot display complete, because if it display completely,  a single image will take up too large screen space,  it defines the height.
+
+* the highest aspect ratio we allowed can be used when we encounters any image that exceed a certain number or aspect ratio. for example, met with a 1:5 images, we only use a 1:3 area to show it or you can adjust the order of the images, but this requires JS calculation. The search result page of “500px” seemingly work in this way. if you try to adjust the window width  to a small value, you will find the images behind the first picture cannot display complete, because if it display completely, a single image will take up too large screen space, so it limits the height.
 * 另外，最后一行的图片如果几乎要占满那一行时，因为占位符的存在，并不会占满，会显得不太理想（读者可以调整窗口宽度观察上面的完整 demo）。这种情况如果是使用 JS 计算的话，是可以避免的：在发现最后一行几乎要占满时，直接让其占满最后一行。
 
 * In addition, that are not likely to be ideal, because even if the images in last line nearly fill it,  it can not  because of placeholders, (you can adjust the width of the window to observe the complete demo above).but this situation can be avoided, If JS calculation are used : when the last line almost filled, just fill it.
+
 * 我们在提到评价图片布局优劣的标准时候说到，每张图片展示区域越接近，评分应该也越高。理论上如果使用 JS 来计算布局，可以在算法上做如下优化：如果一行中比较高的图片比较多，那么这一行就少放些图片，留出更多的空间用来放大图片，这样就能让高图和宽图显示面积更接近一些了。而用 CSS 的方案如果不改变图片顺序就没法做这种优化了。不过如果不改变图片顺序，即使算法做了这些优化，出现在高图比较多的行里的宽图，展示面积会更大，会出现一种比例失调的情况，也不够完美。
 
 When it comes to The standard of image layout, the closer every image dispay, the higher score it should be. In theory ,if you use JS to compute the layout,  the following optimal algorithm can be use : if more higher pictures in a row, less pictures should be put in it, then   more space can leave for larger the picture, so that the display areas of the  higher and larger  images will be closer to each other. But the optimization can not achive on css if you do not  change the order of the pictures would not be able to do this kind of optimization. But if you do not change the order of the images, even if the algorithm are optimized , the display areas of the wider images will be larger in the row which have more higher images,it also not perfect because of imbalance.
 ### 关于降级
 
-The degradation
+### The graceful degradation
 
 由于 IE 9 都是不支持 flexbox 的，所以这个方案必然需要优雅降级，在不支持的浏览器上，让图片都以正方形展示应该也不会太差，然后用 float 或者 inline-block 来折行，这里就不细说了。
 
-Since flexbox is not supported in IE 9, Graceful degradation of this program is necessary. It should not be too bad to display these pictures on a unsupported browser. Then float or inline-block can be used to break the line which it is not detailed here.
+Since flexbox is not supported in IE 9 and below, Graceful degradation of this program is necessary. It should not be too bad to display these pictures in square on a browser which lack the flexbox support. Then float or inline-block can be used to break the line which it is not detailed here.
 
 最后，多个这种布局 float 一下，就可以实现 Google Photos 那种某几个连续日期的图片太少时，展示在同一行的效果。读者可以自行试一下，就不放 demo 了。
 Finally, more such arrangement float the effects of Google Photos which images can display in one row if images of consecutive days is too little can be achieved  .  You can try on your own.
 
 ##### 本文到此结束，谢谢围观！文中如有纰漏之处，还请各位大神留言指正
 
-That's all,folks! If you have any thoughts or questions,feel free to leave a comment!
+That's all, folks! If you have any thoughts or questions, feel free to leave a comment!
