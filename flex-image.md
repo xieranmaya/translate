@@ -306,11 +306,11 @@ Actually, the way of choosing last several images is not perfect, because it's n
 
 那么有没有办法只让最后一行的元素不 grow 呢？一开始我也了很多，甚至在想有没有一个 :last-line 伪类什么的（因为有个 :first-line），始终没有找到能让最后一行不 grow 的方法，然而最后竟然在搜索一个其它话题时找到了办法：
 
-Is there any way to just prevent the last row elements growing? I thought for a long while, even to seek for a `last-line` or `pseudo-class`, but I failed. And then one day, I got the answer occasionally.
+Is there any way to prevent just the last row's elements' growing? I thought for a long while, even to seek for a `last-line` or `pseudo-class`, but I failed. And then one day, I got the answer occasionally:
 
 那就是在最后一个元素的后面再加一个元素，让其 flex-grow 为一个非常大的值比如说 999999999，这样最后一行的剩余空间就基本全被这一个元素的 grow 占掉了，其它元素相当于没有 grow，更进一步，我们可以用伪元素来做这件事（不过 IE 浏览器的伪元素是不支持 flex 属性的，所以还是得用一个真实的元素做 placeholder）:
 
-Adding another element to the last element, and sets its `flex-grow` to a large value (e.g., 999999999). Then the remaining space in the last line will be taken fully up by this extra element's grow. The other elements are not grow, what’s more, we can achieve for this by pseudo-elements. (Pseudo-element of IE browser does not support flex properties, so it is essential to adopt a real element placeholder).
+Adding another element to the last element as the last flex item, and sets its `flex-grow` to a extremely large value (e.g., 999999999). Then the remaining space in the last line will be taken fully up by this extra element's grow. The other elements are thus not growed, what’s more, we can achieve this by pseudo elements(But IE browser does not support flex properties on pseudo elements, so it is essential to adopt a real element placeholder):
 
 ```css
 section::after {
@@ -325,19 +325,19 @@ Ok, we basically solve all the problems encountered in this layout.
 
 Demo，resize 或者 zoom 然后观察最后一行的图片：http://jsbin.com/tisaluy/3/edit?html,css,output
 
-Demo，resize or zoom first, then observe the last row images.
+Demo: resize or zoom first, then observe the images in the last row.
 
 但还有最后一个问题，同前一种布局一样，如果你在线上去加载使用这种方式布局的网页，你会发现页面闪动非常厉害，因为图片在下载之前是不知道宽高的，我们并不能指望图片加载完成后让它把容器撑大，用户会被闪瞎眼。其实真正被闪瞎的可能是我们自己，毕竟开发时要刷新一万零八百遍。
 
-But there is one last question, this layout just like the former one. If you load the layout pages online, pages will occur a severe blinking issue. Before downloading the images, we have no ideas about the width and height. It’s impossible to wait images loading completed to stretch the container. What’s worse, we need refresh pages more than ten thousand times at develop which will have a very worse effect on our eyes too.
+But there is one last question, this layout is just like the former one except for it has a container which can show some extra info for the images. If you load the layout pages online, pages will occur a severe blinking issue. Before downloading the images, we have no ideas about the width and height. It’s impossible to wait images loading completed to stretch the container. What’s worse, we need refresh pages more than ten thousand times at develop which will have a very worse effect on our developer's eyes too.
 
 所以，我们必须预先渲染出图片的展示区域（实际上几乎所有图片类网站都是这么做的），所以这里还是要小用一些 js，这些工作也可以在服务器端做，或者是用任何一个模板引擎(下面的代码使用了 angular 的模板语法)。
 
-So, we have to render the images display area in advance. (Actually, almost all websites with images adopt this method.) JS have to be applied in here. Those works can be finished in the server or any of template engines. (Below codes employ template syntax in Angular.)
+So, we have to render the images display area(i.e. its container) in advance. (Actually, almost all websites with images adopt this approche.) JS have to be applied in here. Those works can be finished on the server or by any template engines. (Below codes employ template syntax in Angular.)
 
 这个布局一旦吐出来，后续对页面所有的动作(resize，zoom)都不会使布局错乱，同时也不需要 JS 参与，符合前文所说的用纯 CSS 实现:
 
-Once this layout finished, all the following actions(resize，zoom) won’t disorder the layout without JS involved. It did it successfully with CSS.
+Once this layout finished, all the subsequent actions(resize，zoom) won’t disorder the layout without JS involved. It did it successfully with CSS.
 
 ```html
 <style>
@@ -380,7 +380,7 @@ We achieve the images layout we expected.
 
 Demo，注意 html 模板里计算宽度的表达式：http://jsbin.com/tisaluy/4/edit?html,css,output
 
-Demo, notice the express in the template
+Demo, notice the expression in the template
 
 那么这个布局的展示效果究竟如何呢？
 
@@ -388,36 +388,36 @@ So, what about the final effect of the layout?
 
 实际上我专门写了代码计算每张图片被展示出来的比例到底有多少：在图片高度为 150px 左右时，约有三分之一的图片展示比例在 99% 以上。最差的图片展示比例一般在 70% 左右浮动，平均每张图片展示比例在 90% 以上。图片越矮，展示效果会越好；图片越高，展示效果就越差。
 
-Acturally I wrote the code to calculate the percentage of each image shows. When images height is about 150px, one third images can show 99% content. The worst effect of images can display about 70% content. So, in average, the display percentage of all images is about 90%. The display effect will be better if the image is shorter(less height), and the display effect will be worse if the image is higher(larger height).
+Acturally I wrote code to calculate the percentage of each image shows. When images height is about 150px, one third images can show 99% content. The worst one or two case of images can display about 70% content. In average, the display percentage of all images is about 90%. The display effect will be better if the image is shorter(less height), and the display effect will be worse if the image is higher(larger height).
 
 因为这种方案最后也被我抛弃了，所以就不放计算展示比例的 demo 了。
 
-I gave up this solution later, so there is no need to present detailed demo.
+I gave up this solution later, so there is no need to present the detailed demo.
 
 ### 看到这里，你应该是觉得被坑了，因为这并没有实现标题中说的 Google Photos 照片列表的布局
 
-You may thought you are played fool of if you don't continue to read on. Because it didn’t accomplish the Google Photos images layout as you expected.
+You may thought you are played fool of if you don't keep reading. Because it didn’t accomplish the Google Photos images layout as you expected.
 
 因为**每行的高度是一样的**，就必然导致大部分图片没有完全展示，跟 Google Photos / 500px 那些高大上的布局根本就不一样！
 
-Because of the same height in every row, most images are not displayed completely. And those images are totally unrelated to the marvelous Photos / 500px layout.
+Because of the same height in each row, most images are not displayed completely. And this layout are totally unrelated to the marvelous Google Photos / 500px layout.
 
 可是正文从现在才正式开始，下面介绍的方式也是我在实现了上面的布局后很久才想出来的，前面的内容只是介绍一些解决边角问题用的。
 
-The real post start from here, below method came after the above method for a long while. The above content just introduce the corner cases solution.
+The real post starts from here, below approche came after the above method after a long while. The above content just introduce the solution for some corner cases.
 
 可以看到，前面的实现方式并没有让每张图片的内容全部都显示出来，因为每行的高度是一样的，而想要实现 500px 的布局，每行图片的高度很多时候是不一样的。
 
-We can see that above solution doesn’t make every image display completely. If you need accomplish 500px layout, the height of each row is most likely to not equal to each other in 500px layout.
+We can see that the above solution doesn't make every image to display completely. If you need to accomplish 500px layout, the height of each row is most likely to not equal to each other in that layout.
 
 一开始我觉得，CSS 也就只能实现到这种程度了吧，直到我遇到了另一个需求:
 
-For the start, I guessed CSS can dealt with nothing more than these functions.
-However, what I needed later proved me wrong.
+For the start, I guessed CSS can dealt with nothing more than the above extent.
+However, what I needed later proved me wrong:
 
 我想用一个正方形的容器展示内容，并且希望无论浏览器窗口多宽，这些正方形的容器总是能铺满窗口的水平宽度而不留多余的空间(除了元素之间的空白)，乍一看这个需求可能需要 JS 参与：读出当前浏览器窗口的宽度，然后计算正方形容器的 size，然后渲染。
 
-I try to display content with square container, and I want the square container to always spread with the window without spare room (except the blank between the elements) regardless of the browser window’s width. At first glance, this may require the JS participation: scan the browser window’s width first, then calculate the size of a square container, and then render.
+I want to display some content in a square container, and I want the square container to always spread with the window without spare room (except the blank between the elements) regardless of the browser window’s width. At first glance, this may require the JS participation: read the browser window's width first, then calculate the size of a square container, and then render.
 
 可以看这个 demo，试着拉动一下窗口宽度然后看效果：
 http://jsbin.com/tomipun/4/edit?html,css,output
@@ -426,29 +426,29 @@ Open this demo to see the effect, try to resize or zoom the page.
 
 拉动过程中可以看到，正方形的容器会实时变大，大到一定程度后又变小让每行多出一个正方形容器。 如果只看这一个 demo，可能各位不一定能一下子想到如何实现的，但如果只有一个正方形容器，它的边长总是浏览器宽度的一半，想必很多人都知道的，**长宽比固定的容器**要怎么实现吧？
 
-During the process of resize/zoom the page, the square container will grow or shrink in real-time but will always be square. It will grow to a point, later it wanes. If we only focus on one demo, it’s hard to come up with the solution to achieve the fixed aspect ratios. But if there is a square container and its side length is the half of the browser width, you guys might know the solution.
+During the process of resize / zoom the page, the square container will grow or shrink in real-time but will always be square, and its size is remaining in a specific range. It will grow to a point, later it wanes. If we only focus on one demo, it’s hard to come up with the solution to achieve the fixed aspect ratios. But if there is a square container and its side length is the half of the browser width, you guys might know the solution.
 
 我们知道(事实上很多人都不确定，所以这可以做为一个面试题)，margin 和 padding 的值如果取为百分比的话，这个百分比是相对于**父元素的宽度**的，也就是说，如果我给一个 block 元素设置 padding-bottom(当然，也完全可以是 padding-top，甚至可以两个一起用~)为 100% 的话，元素本身高度指定为 0，那么这个元素将始终是一个正方形，并且会随着容器宽度的变化而变化，想要改变正方形的大小，只需要改变父容器的宽度就可以了：
 
-We may know, if margin and padding value is given by percentage, this value is relative to it's parent elements. Namely, block element is set to 100% padding-bottom and element height is set to 0, so this element will keep square and it will change with the container height. So, if we try to change the size of the square, we only need to change the width of the parent container first.
+As we know, if we specify margin or padding value by percentage, the value is relative to it's parent element's width. Namely, if we give a block element 100% for its `padding-bottom` and its `height` setting to 0, the element will keep to  square and it will change with the container height. If we want to change the size of the square, we only need to change the width of the parent container, the height will change appropriately.
 
 看这个的 demo:
 http://jsbin.com/lixece/1/edit?html,css,output
 拉动窗口可以看到色块会变大，但始终保持正方形。当然，如果参照物是浏览器窗口，那么在现代浏览中，这个效果可以用 vw / vh 实现；但如果参照物不是浏览器窗口，就只能用垂直 padding 来实现了。
 
-Please check this link. The color block will grow and it remains square while we resize the window. If we take browser window as a reference, this effect can be achieved with vw / vh in modern browser. If not, we can choose vertical padding to accomplish.
+Check this link: the colored block will grow and it remains square while we resize the window. If we take browser window as a reference, this effect can be achieved with vw / vh in modern browser. If not, we can choose vertical padding to accomplish.
 
 于是我就想到，如果不给 flex item 的元素设置高度，而是让其被一个子元素撑开，并且这个子元素的宽度是100%，padding-bottom 也是 100%，那么 flex item 及这个用来撑大父元素的子元素就会同时保持为正方形了，于是就实现了上面的那种正方形阵列布局。
 
-Then it occurs to me, flex item element can be stretched by its child elemen item instead of setting height for it. And the child element's width is 100% and padding-bottom is 100%, so both flex item the child element will keep square at the same time. As a result, the above square layout will be finished.
+Then it occurs to me, if we do not set flex item's height and let it stretch by its child element, and the child element's width is 100% and padding-bottom is 100%, then both flex item the child element will keep square at the same time. As a result, the above square grid layout can be finished.
 
 但仅仅这样还不够，最后一行又会出问题，如果最后一行的元素个数跟前面的行不一样的话，它们虽然会保持正方形，但是因为 grow 的关系，会比较大，那如何保证最后一行的元素也跟前面的行大小相同呢，这时使用一个元素并设置很大的 flex-grow 让其占满最后一行剩余空间的做法已经不可行了，因为我们需要让最后一行的元素**恰到好处**的跟前面行的元素 grow 时多出一样的空间。
 
-This is far away from the perfect result. If the element number in the last row differs from the number of the previous rows, color block will be a larger square due to growing. How to make the last row’s elements stay the same with the previous row? It doesn’t work if we use a extra element and set a bit `flex-grow` value to fill the spare room in the last row. We need keep the same spare room of the previous row and the last row when their elements grow.
+This is far away from the perfect result. If the element number in the last row differs from the number of the previous rows, color block in the last row will be larger due to growing. How to make the last row’s elements stay the same with the previous row? It doesn’t work if we use a extra element and set a large `flex-grow` value to fill the spare room in the last row. We need keep the last row's element to grow same space with the previous rows.
 
 其实解决方案也很简单，把最后一行不当最后一行就行了！此话怎讲呢？
 
-To be honest, the solution is simple. We treat the last row to be not the last row.
+To be honest, the solution is simple. We just treat the last row to be not the last row.
 
 在最后添加多个占位符，保证可见的最后一个元素永远处于视觉上的最后一行，而让占位符占据真正的最后一行，然后把这些占位符的高度设置为 0 。具体添加多少个占位符呢？显然是一行最多能显示多少个元素，就添加多少个了，比如前面的 demo 就添加了 8 个占位符，你可以在源代码里面看一下。另外为了更好的语义，其实可以用其它的标签当做占位符。
 
