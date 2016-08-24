@@ -13,6 +13,8 @@ https://xieranmaya.github.io/images/cats/cats.html
 
 ## Besides, to show the source code, jsbin.com is used in some demos that we will talk about later. But the jsbin.com sometimes may not work. If that happens, just rewrite the source code in the edit box without changing the meaning. For example, press the “enter” button in the last line.
 
+## PS: All the images used in the demo are from 500px.com, the the images' copyright are belonging to the author, the images' id are in the images' url and you can access the 500px original page with https://500px.com/photo/[id].
+
 ### Ok, let’s start.
 
 Firstly, let’s see the differences between three common images layout:
@@ -25,7 +27,7 @@ Firstly, let’s see the differences between three common images layout:
     * The image displaying wall usually has uneven bottom.
     * Though the bottom can not be entirely even, JS is applied to make it with reordering the photos. So JS must be involved when the page is reflowed, resized or zoomed in this layout.
 
-2. Images layout in which image has unequal width and height with Google Photos as representation, such else as 500px and tuchong.com.
+2. Images layout in which image has unequal width and height with Google Photos as representation, such else as [500px](https://500px.com/popular) and [tuchong.com](tuchong.com).
 
     * Images are stretched in the same proportion too.
     * The display area is fully occupied by every row of images in horizontal direction, leaving no extra blank.
