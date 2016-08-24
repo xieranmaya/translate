@@ -602,7 +602,7 @@ When it comes to The standard of image layout, the closer every image dispay, th
 
 由于 IE 9 都是不支持 flexbox 的，所以这个方案必然需要优雅降级，在不支持的浏览器上，让图片都以正方形展示应该也不会太差，然后用 float 或者 inline-block 来折行，这里就不细说了。
 
-Since flexbox is not supported in IE 9 and below, Graceful degradation of this program is necessary. It should not be too bad to display these pictures in square on a browser which lack the flexbox support. Then float or inline-block can be used to break the line which it is not detailed here.
+Since flexbox is not supported in IE9 and below, graceful degradation of this program is necessary. It should not be too bad to display these pictures in square on a browser which lack the flexbox support. Then float or inline-block can be used to break the line which it is not detailed here.
 
 最后，多个这种布局 float 一下，就可以实现 Google Photos 那种某几个连续日期的图片太少时，展示在同一行的效果。读者可以自行试一下，就不放 demo 了。
 Finally, more such arrangement float the effects of Google Photos which images can display in one row if images of consecutive days is too little can be achieved  .  You can try on your own.
