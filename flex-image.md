@@ -101,6 +101,7 @@ img {
 Set the `flex-wrap` of flex container into `wrap`. In this way, line wrap will happens if one line can not lay one more image. Every line's images will fill in the container's horinontal space due to the grow. It seems that it's almost achieved our expectation effect, but every image has been stretched in **non-proportion** so that the images are out of shape. This is easy for us, we can fix it with `object-fit: cover;`. However, part of the image will be cliped. 
 
 Final demo: http://jsbin.com/tisaluy/1/edit?html,css,js,output
+![image](https://cloud.githubusercontent.com/assets/2993947/17921846/85d0c470-6a0e-11e6-9d16-01199288afe9.png)
 
 Actually, the above mentioned DOM structure can't be used in the practice
 
@@ -136,6 +137,7 @@ We added a container for each image. Firstly, the image height is set 200px stil
 This method still is not perfect just like the former one. The images height is all same, and partial image has been clip for obvious reason.
 
 The entire demo of the above solution: http://jsbin.com/tisaluy/2/edit?html,css,output
+![image](https://cloud.githubusercontent.com/assets/2993947/17921865/a503e020-6a0e-11e6-9f76-1dcf719f499f.png)
 
 If the image height value is set to a small value, the above layout is roughly right. There will be more images in every row, so extra space in each row will be less and divided by more images. In this way, the ratio of every container will be more close to the real image ratio. Most of images can display the main content.
 
@@ -213,6 +215,7 @@ section::after {
 Ok, we basically solve all the problems encountered in this layout.
 
 Demo: resize or zoom first, then observe the images in the last row: http://jsbin.com/tisaluy/3/edit?html,css,output
+![image](https://cloud.githubusercontent.com/assets/2993947/17922022/6ea80d52-6a0f-11e6-98e1-9faeb46d8c7f.png)
 
 But there is one last question, this layout is just like the former one except for it has a container which can show some extra info for the images. If you load the layout pages online, pages will occur a severe blinking issue. Before downloading the images, we have no ideas about the width and height. It’s impossible to wait images loading completed to stretch the container. What’s worse, we need refresh pages more than ten thousand times at develop which will have a very worse effect on our developer's eyes too.
 
@@ -255,6 +258,7 @@ Once this layout finished, all the subsequent actions(resize，zoom) won’t dis
 We achieve the images layout we expected.
 
 Demo, notice the expression in the template: http://jsbin.com/tisaluy/4/edit?html,css,output
+![image](https://cloud.githubusercontent.com/assets/2993947/17922079/bd0aaa40-6a0f-11e6-8579-d2eb6fca9ad6.png)
 
 So, what about the final effect of the layout?
 
@@ -276,6 +280,7 @@ However, what I needed later proved me wrong:
 I want to display some content in a square container, and I want the square container to always spread with the window without spare room (except the blank between the elements) regardless of the browser window’s width. At first glance, this may require the JS participation: read the browser window's width first, then calculate the size of a square container, and then render.
 
 Open this demo to see the effect, try to resize or zoom the page: http://jsbin.com/tomipun/4/edit?html,css,output
+![image](https://cloud.githubusercontent.com/assets/2993947/17922120/038bfe92-6a10-11e6-99d2-91699afff6f1.png)
 
 During the process of resize / zoom the page, the square container will grow or shrink in real-time but will always be square, and its size is remaining in a specific range. It will grow to a point, later it wanes. If we only focus on one demo, it’s hard to come up with the solution to achieve the fixed aspect ratios. But if there is a square container and its side length is the half of the browser width, you guys might know the solution.
 
@@ -283,7 +288,7 @@ As we know, if we specify margin or padding value by percentage, the value is re
 
 Check this link: 
 http://jsbin.com/lixece/1/edit?html,css,output
-the colored block will grow and it remains square while we resize the window. If we take browser window as a reference, this effect can be achieved with vw / vh in modern browser. If not, we can choose vertical padding to accomplish.
+the colored block will grow or shrink but will remains square while we resize the window. If we take browser window as a reference, this effect can be achieved with vw / vh in modern browser. If not, we can choose vertical padding to accomplish.
 
 Then it occurs to me, if we do not set flex item's height and let it stretch by its child element, and the child element's width is 100% and padding-bottom is 100%, then both flex item the child element will keep square at the same time. As a result, the above square grid layout can be finished.
 
@@ -323,12 +328,14 @@ In the above layout, because of the flex-wrap, every row will be breaked and ext
 For demonstration purpose，I will set the size of the image a quarter of the container, it should be clear that the bottom right corner of the image is at the center of the container.
 
 Demo: http://jsbin.com/tisaluy/5/edit?html,css,output
+![image](https://cloud.githubusercontent.com/assets/2993947/17922221/7a9a4390-6a10-11e6-9233-530da7f3d365.png)
 
 Next, we need to make all the elements to grow. Could we set all their `flex-grow` to 1?
 
 In fact, if we tried, we will know 1 is not right. Because we need every container can keep its proportion when it grows.
 
 Demo：http://jsbin.com/tisaluy/6/edit?html,css,output
+![image](https://cloud.githubusercontent.com/assets/2993947/17922251/a94cb038-6a10-11e6-9225-6a9358e7c9d8.png)
 
 If we set the flex-grow of flex item to 1, the container proportion is different from the images then. In this demo I set the images height to the container’s height for better observation. 
 
@@ -350,6 +357,7 @@ The final code are shwon as:
 As a result, the current line will be filled with the container, and the same aspect ratio will be kept as the internal image which will put into the it:
 
 Demo: http://jsbin.com/tisaluy/8/edit?html,css,output
+![image](https://cloud.githubusercontent.com/assets/2993947/17922309/e674f3e4-6a10-11e6-9975-6f4261d17968.png)
 
 As for how to deal with the last line, you can use a great element of flex-grow to fill the remaining space just as I described above.
 
